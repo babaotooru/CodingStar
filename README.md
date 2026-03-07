@@ -7,7 +7,7 @@ A full-stack online coding judge platform similar to LeetCode/HackerRank, built 
 | Layer | Technology |
 |-------|-----------|
 | Frontend | React 18, Tailwind CSS, Monaco Editor |
-| Backend | Java 17, Spring Boot 3.2, Spring Security (JWT) |
+| Backend | Java 21, Spring Boot 3.2, Spring Security (JWT) |
 | Database | PostgreSQL 16 |
 | Cache | Redis 7 |
 | Containerization | Docker, Docker Compose |
@@ -104,7 +104,7 @@ docker-compose up --build
 ### Option 2: Manual Setup
 
 #### Prerequisites
-- Java 17+
+- Java 21+
 - Node.js 18+
 - PostgreSQL 16
 - Redis 7
