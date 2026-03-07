@@ -1,0 +1,11 @@
+com\onlinejudge\dto\RegisterRequest.class
+com\onlinejudge\dto\SubmissionResponse.class
+com\onlinejudge\entity\Problem.class
+com\onlinejudge\entity\Submission.class
+com\onlinejudge\entity\User.class
+com\onlinejudge\entity\TestCase.class
+com\onlinejudge\dto\TestCaseRequest.class
+com\onlinejudge\entity\Submission$Status.class
+com\onlinejudge\entity\User$Role.class
+com\onlinejudge\entity\Problem$Difficulty.class
+com\onlinejudge\entity\Submission$Language.class
