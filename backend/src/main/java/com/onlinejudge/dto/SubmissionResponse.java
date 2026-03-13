@@ -22,5 +22,7 @@ public class SubmissionResponse {
     private String errorMessage;
     private int testCasesPassed;
     private int totalTestCases;
+    private int scoreEarned;
+    private int starsEarned;
     private LocalDateTime submittedAt;
 }

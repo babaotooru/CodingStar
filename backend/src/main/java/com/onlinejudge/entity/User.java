@@ -26,14 +26,23 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @NotBlank
     @Email
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
 
-    @NotBlank
-    @Column(nullable = false)
+    @Column
     private String password;
+
+    @Column
+    private String phone;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider")
+    @Builder.Default
+    private AuthProvider authProvider = AuthProvider.LOCAL;
+
+    @Column(name = "provider_id")
+    private String providerId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -41,16 +50,16 @@ public class User {
     private Role role = Role.USER;
 
     @Column(name = "total_solved")
-    @Builder.Default
-    private int totalSolved = 0;
+    private Integer totalSolved = 0;
 
     @Column(name = "total_submissions")
-    @Builder.Default
-    private int totalSubmissions = 0;
+    private Integer totalSubmissions = 0;
 
     @Column(name = "score")
-    @Builder.Default
-    private int score = 0;
+    private Integer score = 0;
+
+    @Column(name = "stars")
+    private Integer stars = 0;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default
@@ -62,5 +71,9 @@ public class User {
 
     public enum Role {
         USER, ADMIN
+    }
+
+    public enum AuthProvider {
+        LOCAL, GOOGLE, GITHUB
     }
 }

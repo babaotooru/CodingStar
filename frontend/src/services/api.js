@@ -40,10 +40,17 @@ export const problemsAPI = {
   getAll: (page = 0, size = 20, sortBy = 'id') =>
     api.get(`/problems?page=${page}&size=${size}&sortBy=${sortBy}`),
   getById: (id) => api.get(`/problems/${id}`),
+  getRandom: () => api.get('/problems/random'),
   getByDifficulty: (difficulty, page = 0, size = 20) =>
     api.get(`/problems/difficulty/${difficulty}?page=${page}&size=${size}`),
   search: (query, page = 0, size = 20) =>
     api.get(`/problems/search?query=${encodeURIComponent(query)}&page=${page}&size=${size}`),
+  getByCategory: (prefix, page = 0, size = 50, difficulty = null) => {
+    let url = `/problems/category?prefix=${encodeURIComponent(prefix)}&page=${page}&size=${size}`;
+    if (difficulty) url += `&difficulty=${difficulty}`;
+    return api.get(url);
+  },
+  getCategories: () => api.get('/problems/categories'),
   create: (data) => api.post('/problems', data),
   update: (id, data) => api.put(`/problems/${id}`, data),
   delete: (id) => api.delete(`/problems/${id}`),
@@ -52,16 +59,46 @@ export const problemsAPI = {
 // Submissions API
 export const submissionsAPI = {
   submit: (data) => api.post('/submissions', data),
+  run: (data) => api.post('/submissions/run', data),
   getMy: (page = 0, size = 20) =>
     api.get(`/submissions/my?page=${page}&size=${size}`),
+  getAll: (page = 0, size = 20) =>
+    api.get(`/submissions/all?page=${page}&size=${size}`),
   getById: (id) => api.get(`/submissions/${id}`),
   getByProblem: (problemId, page = 0, size = 20) =>
     api.get(`/submissions/problem/${problemId}?page=${page}&size=${size}`),
+  getStats: (problemId, executionTimeMs, memoryUsedKb) =>
+    api.get(`/submissions/stats/${problemId}?executionTimeMs=${executionTimeMs || 0}&memoryUsedKb=${memoryUsedKb || 0}`),
 };
 
 // Leaderboard API
 export const leaderboardAPI = {
   get: () => api.get('/leaderboard'),
+};
+
+// Contest API
+export const contestAPI = {
+  getAll: () => api.get('/contests'),
+  getActive: () => api.get('/contests/active'),
+  getById: (id) => api.get(`/contests/${id}`),
+  register: (id) => api.post(`/contests/${id}/register`),
+  isRegistered: (id) => api.get(`/contests/${id}/registered`),
+  getRankings: (id) => api.get(`/contests/${id}/rankings`),
+};
+
+// User API
+export const userAPI = {
+  getProfile: () => api.get('/users/profile'),
+  getCount: () => api.get('/users/count'),
+};
+
+// Problem Notes API
+export const problemNotesAPI = {
+  save: (data) => api.post('/problem-notes', data),
+  get: (problemId) => api.get(`/problem-notes/problem/${problemId}`),
+  getAll: () => api.get('/problem-notes/my-notes'),
+  hasNote: (problemId) => api.get(`/problem-notes/has-note/${problemId}`),
+  delete: (problemId) => api.delete(`/problem-notes/problem/${problemId}`),
 };
 
 export default api;

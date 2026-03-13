@@ -16,7 +16,7 @@ public class LeaderboardService {
 
     private final UserRepository userRepository;
 
-    @Cacheable(value = "leaderboard")
+    //@Cacheable(value = "leaderboard")
     public List<LeaderboardEntry> getLeaderboard() {
         List<User> users = userRepository.findTopUsers();
         List<LeaderboardEntry> leaderboard = new ArrayList<>();
@@ -29,6 +29,7 @@ public class LeaderboardService {
                     .totalSolved(user.getTotalSolved())
                     .totalSubmissions(user.getTotalSubmissions())
                     .score(user.getScore())
+                    .stars(user.getStars())
                     .rank(rank++)
                     .build());
         }

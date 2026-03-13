@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "pg": "^8.20.0"
+  },
+  "name": "online-coding-judge-system",
+  "version": "1.0.0",
+  "description": "A full-stack online coding judge platform similar to LeetCode/HackerRank, built with **Spring Boot** and **React**.",
+  "main": "generate-hard-problems.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

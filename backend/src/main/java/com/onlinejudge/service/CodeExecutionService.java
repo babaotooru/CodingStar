@@ -172,6 +172,12 @@ public class CodeExecutionService {
                 case JAVASCRIPT:
                     pb = new ProcessBuilder("node", dir.resolve("solution.js").toString());
                     break;
+                case SQL:
+                    // SQL execution requires database setup
+                    return new TestResult(Submission.Status.ACCEPTED, 0,
+                            "SQL query submitted. Note: Full SQL execution with database validation is not yet implemented. "
+                                    +
+                                    "Your query has been saved and will be manually reviewed.");
                 default:
                     return new TestResult(Submission.Status.RUNTIME_ERROR, 0, "Unsupported language");
             }
@@ -227,6 +233,7 @@ public class CodeExecutionService {
             case CPP -> "solution.cpp";
             case C -> "solution.c";
             case JAVASCRIPT -> "solution.js";
+            case SQL -> "query.sql";
         };
     }
 

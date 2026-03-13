@@ -58,12 +58,20 @@ public class Submission {
     @Builder.Default
     private int totalTestCases = 0;
 
+    @Column(name = "score_earned")
+    @Builder.Default
+    private int scoreEarned = 0;
+
+    @Column(name = "stars_earned")
+    @Builder.Default
+    private int starsEarned = 0;
+
     @Column(name = "submitted_at", nullable = false, updatable = false)
     @Builder.Default
     private LocalDateTime submittedAt = LocalDateTime.now();
 
     public enum Language {
-        JAVA, PYTHON, CPP, C, JAVASCRIPT
+        JAVA, PYTHON, CPP, C, JAVASCRIPT, SQL
     }
 
     public enum Status {

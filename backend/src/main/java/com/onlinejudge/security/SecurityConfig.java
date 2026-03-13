@@ -28,6 +28,8 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
+    private final HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,12 +39,27 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/problems/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/leaderboard/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/count").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/submissions/all/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/submissions/stats/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/contests", "/api/contests/active").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/contests/{id}", "/api/contests/{id}/rankings").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/problems/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/problems/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/problems/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(auth -> auth
+                                .authorizationRequestRepository(cookieAuthorizationRequestRepository))
+                        .successHandler(oAuth2SuccessHandler)
+                        .failureHandler((request, response, exception) -> {
+                            System.err.println("OAuth2 login failed: " + exception.getMessage());
+                            exception.printStackTrace();
+                            response.sendRedirect("http://localhost:3000/login?error=oauth_failed");
+                        }))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

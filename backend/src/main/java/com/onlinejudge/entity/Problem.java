@@ -59,6 +59,30 @@ public class Problem {
     @Builder.Default
     private String category = "General";
 
+    @Column(name = "topics")
+    private String topics; // Comma-separated: Array,HashMap,TwoPointer
+
+    @Column(name = "companies")
+    private String companies; // Comma-separated: Google,Amazon,Microsoft
+
+    @Column(columnDefinition = "TEXT")
+    private String intuition;
+
+    @Column(columnDefinition = "TEXT")
+    private String approach;
+
+    @Column(columnDefinition = "TEXT")
+    private String algorithm;
+
+    @Column(columnDefinition = "TEXT")
+    private String syntaxNotes;
+
+    @Column(name = "hints", columnDefinition = "TEXT")
+    private String hints; // Newline-separated hints
+
+    @Column(columnDefinition = "TEXT")
+    private String editorial; // Comprehensive tutorial content
+
     @Column(name = "total_submissions")
     @Builder.Default
     private int totalSubmissions = 0;

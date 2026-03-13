@@ -11,5 +11,6 @@ public class LeaderboardEntry {
     private int totalSolved;
     private int totalSubmissions;
     private int score;
+    private int stars;
     private int rank;
 }

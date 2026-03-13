@@ -16,6 +16,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ProblemService {
@@ -41,6 +46,25 @@ public class ProblemService {
 
     public Page<ProblemResponse> searchProblems(String query, Pageable pageable) {
         return problemRepository.findByTitleContainingIgnoreCase(query, pageable).map(this::toResponse);
+    }
+
+    public Page<ProblemResponse> getProblemsByCategoryPrefix(String prefix, Pageable pageable) {
+        return problemRepository.findByCategoryStartingWith(prefix, pageable).map(this::toResponse);
+    }
+
+    public Page<ProblemResponse> getProblemsByCategoryPrefixAndDifficulty(String prefix, Problem.Difficulty difficulty,
+            Pageable pageable) {
+        return problemRepository.findByCategoryStartingWithAndDifficulty(prefix, difficulty, pageable)
+                .map(this::toResponse);
+    }
+
+    public Long getRandomProblemId() {
+        long count = problemRepository.count();
+        if (count == 0)
+            throw new ResourceNotFoundException("No problems available");
+        long randomIndex = (long) (Math.random() * count);
+        return problemRepository.findAll(
+                org.springframework.data.domain.PageRequest.of((int) randomIndex, 1)).getContent().get(0).getId();
     }
 
     @Transactional
@@ -112,6 +136,17 @@ public class ProblemService {
         problemRepository.deleteById(id);
     }
 
+    public List<Map<String, Object>> getCategoriesWithCount() {
+        return problemRepository.findCategoriesWithCount().stream()
+                .map(row -> {
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    map.put("category", row[0]);
+                    map.put("count", ((Number) row[1]).longValue());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+
     private ProblemResponse toResponse(Problem problem) {
         double acceptanceRate = problem.getTotalSubmissions() > 0
                 ? (double) problem.getAcceptedSubmissions() / problem.getTotalSubmissions() * 100
@@ -128,6 +163,14 @@ public class ProblemService {
                 .sampleInput(problem.getSampleInput())
                 .sampleOutput(problem.getSampleOutput())
                 .category(problem.getCategory())
+                .topics(problem.getTopics())
+                .companies(problem.getCompanies())
+                .intuition(problem.getIntuition())
+                .approach(problem.getApproach())
+                .algorithm(problem.getAlgorithm())
+                .syntaxNotes(problem.getSyntaxNotes())
+                .hints(problem.getHints())
+                .editorial(problem.getEditorial())
                 .timeLimitMs(problem.getTimeLimitMs())
                 .memoryLimitMb(problem.getMemoryLimitMb())
                 .totalSubmissions(problem.getTotalSubmissions())

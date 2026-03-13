@@ -45,6 +45,12 @@ public class ProblemController {
         return ResponseEntity.ok(problemService.getProblemsByDifficulty(difficulty, pageable));
     }
 
+    @GetMapping("/random")
+    public ResponseEntity<java.util.Map<String, Long>> getRandomProblem() {
+        Long id = problemService.getRandomProblemId();
+        return ResponseEntity.ok(java.util.Map.of("id", id));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<Page<ProblemResponse>> searchProblems(
             @RequestParam String query,
@@ -52,6 +58,25 @@ public class ProblemController {
             @RequestParam(defaultValue = "20") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(problemService.searchProblems(query, pageable));
+    }
+
+    @GetMapping("/category")
+    public ResponseEntity<Page<ProblemResponse>> getProblemsByCategory(
+            @RequestParam String prefix,
+            @RequestParam(required = false) Problem.Difficulty difficulty,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("category").and(Sort.by("id")));
+        if (difficulty != null) {
+            return ResponseEntity
+                    .ok(problemService.getProblemsByCategoryPrefixAndDifficulty(prefix, difficulty, pageable));
+        }
+        return ResponseEntity.ok(problemService.getProblemsByCategoryPrefix(prefix, pageable));
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<java.util.List<java.util.Map<String, Object>>> getCategories() {
+        return ResponseEntity.ok(problemService.getCategoriesWithCount());
     }
 
     @PostMapping

@@ -19,6 +19,14 @@ public class LeaderboardController {
 
     @GetMapping
     public ResponseEntity<List<LeaderboardEntry>> getLeaderboard() {
-        return ResponseEntity.ok(leaderboardService.getLeaderboard());
+        try {
+            List<LeaderboardEntry> leaderboard = leaderboardService.getLeaderboard();
+            System.out.println("Leaderboard fetched successfully: " + leaderboard.size() + " users");
+            return ResponseEntity.ok(leaderboard);
+        } catch (Exception e) {
+            System.err.println("ERROR fetching leaderboard: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

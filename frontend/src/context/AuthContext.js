@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authAPI } from '../services/api';
 
 const AuthContext = createContext(null);
@@ -44,6 +44,10 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const setOAuthUser = useCallback((userData) => {
+    setUser(userData);
+  }, []);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-dark-950">
@@ -53,7 +57,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout, setOAuthUser }}>
       {children}
     </AuthContext.Provider>
   );

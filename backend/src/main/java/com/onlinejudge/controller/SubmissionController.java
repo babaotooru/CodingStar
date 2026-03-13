@@ -14,6 +14,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/submissions")
 @RequiredArgsConstructor
@@ -27,6 +29,13 @@ public class SubmissionController {
             @Valid @RequestBody SubmissionRequest request) {
         SubmissionResponse response = submissionService.submitCode(userDetails.getUsername(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/run")
+    public ResponseEntity<SubmissionResponse> runCode(
+            @Valid @RequestBody SubmissionRequest request) {
+        SubmissionResponse response = submissionService.runCode(request);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/my")
@@ -50,5 +59,21 @@ public class SubmissionController {
             @RequestParam(defaultValue = "20") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(submissionService.getProblemSubmissions(problemId, pageable));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Page<SubmissionResponse>> getAllSubmissions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(submissionService.getAllSubmissions(pageable));
+    }
+
+    @GetMapping("/stats/{problemId}")
+    public ResponseEntity<Map<String, Object>> getSubmissionStats(
+            @PathVariable Long problemId,
+            @RequestParam(required = false) Integer executionTimeMs,
+            @RequestParam(required = false) Integer memoryUsedKb) {
+        return ResponseEntity.ok(submissionService.getSubmissionStats(problemId, executionTimeMs, memoryUsedKb));
     }
 }
