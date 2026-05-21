@@ -6,7 +6,9 @@ import com.onlinejudge.repository.ContestRepository;
 import com.onlinejudge.repository.ProblemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,8 @@ public class ContestSchedulerService {
     private final ContestRepository contestRepository;
     private final ProblemRepository problemRepository;
 
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+
     // Run every day at midnight
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
@@ -35,9 +39,14 @@ public class ContestSchedulerService {
     }
 
     // Also run at startup to ensure today/tomorrow have contests
-    @jakarta.annotation.PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initContests() {
+        if (!contestSchemaReady()) {
+            log.warn("Skipping contest initialization because the contests schema is not ready yet");
+            return;
+        }
+
         LocalDate today = LocalDate.now();
         generateContestsForDate(today);
 
@@ -54,11 +63,16 @@ public class ContestSchedulerService {
     }
 
     private void generateContestsForDate(LocalDate date) {
+        if (!contestSchemaReady()) {
+            return;
+        }
+
         LocalDateTime dayStart = date.atStartOfDay();
         LocalDateTime dayEnd = date.atTime(23, 59, 59);
 
         List<Contest> existing = contestRepository.findByStartTimeBetween(dayStart, dayEnd);
-        if (!existing.isEmpty()) return;
+        if (!existing.isEmpty())
+            return;
 
         boolean isSunday = date.getDayOfWeek() == DayOfWeek.SUNDAY;
 
@@ -78,7 +92,7 @@ public class ContestSchedulerService {
     }
 
     private void createContest(LocalDate date, LocalTime startTime, int durationMinutes,
-                               String title, String minDifficulty, String maxDifficulty) {
+            String title, String minDifficulty, String maxDifficulty) {
         LocalDateTime start = date.atTime(startTime);
         LocalDateTime end = start.plusMinutes(durationMinutes);
 
@@ -88,7 +102,8 @@ public class ContestSchedulerService {
             return;
         }
 
-        // Pick random problems: 2 easy, 1 medium, 1 hard (or adjust based on difficulty range)
+        // Pick random problems: 2 easy, 1 medium, 1 hard (or adjust based on difficulty
+        // range)
         List<Problem> easy = new java.util.ArrayList<>(problemRepository.findByDifficulty(Problem.Difficulty.EASY,
                 PageRequest.of(0, (int) Math.min(totalProblems, 500))).getContent());
         List<Problem> medium = new java.util.ArrayList<>(problemRepository.findByDifficulty(Problem.Difficulty.MEDIUM,
@@ -101,10 +116,14 @@ public class ContestSchedulerService {
         Collections.shuffle(hard);
 
         List<Problem> contestProblems = new java.util.ArrayList<>();
-        if (!easy.isEmpty()) contestProblems.add(easy.get(0));
-        if (easy.size() > 1) contestProblems.add(easy.get(1));
-        if (!medium.isEmpty()) contestProblems.add(medium.get(0));
-        if (!hard.isEmpty()) contestProblems.add(hard.get(0));
+        if (!easy.isEmpty())
+            contestProblems.add(easy.get(0));
+        if (easy.size() > 1)
+            contestProblems.add(easy.get(1));
+        if (!medium.isEmpty())
+            contestProblems.add(medium.get(0));
+        if (!hard.isEmpty())
+            contestProblems.add(hard.get(0));
 
         String desc = String.format("Solve %d problems in %d minutes. Problems range from %s to %s difficulty.",
                 contestProblems.size(), durationMinutes,
@@ -117,7 +136,8 @@ public class ContestSchedulerService {
                 .endTime(end)
                 .durationMinutes(durationMinutes)
                 .problems(contestProblems)
-                .status(start.isAfter(LocalDateTime.now()) ? Contest.ContestStatus.UPCOMING : Contest.ContestStatus.ACTIVE)
+                .status(start.isAfter(LocalDateTime.now()) ? Contest.ContestStatus.UPCOMING
+                        : Contest.ContestStatus.ACTIVE)
                 .build();
 
         contestRepository.save(contest);
@@ -127,6 +147,10 @@ public class ContestSchedulerService {
     @Scheduled(fixedRate = 60000)
     @Transactional
     public void updateStatuses() {
+        if (!contestSchemaReady()) {
+            return;
+        }
+
         LocalDateTime now = LocalDateTime.now();
         List<Contest> upcoming = contestRepository.findByStatusOrderByStartTimeAsc(Contest.ContestStatus.UPCOMING);
         for (Contest c : upcoming) {
@@ -141,6 +165,26 @@ public class ContestSchedulerService {
                 c.setStatus(Contest.ContestStatus.ENDED);
                 contestRepository.save(c);
             }
+        }
+    }
+
+    private boolean contestSchemaReady() {
+        try {
+            Boolean hasDuration = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) > 0 FROM INFORMATION_SCHEMA.COLUMNS WHERE LOWER(TABLE_NAME) = 'contests' AND LOWER(COLUMN_NAME) = 'duration_minutes'",
+                    Boolean.class);
+            Boolean hasContestProblems = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) > 0 FROM INFORMATION_SCHEMA.TABLES WHERE LOWER(TABLE_NAME) = 'contest_problems'",
+                    Boolean.class);
+            Boolean hasContestParticipants = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) > 0 FROM INFORMATION_SCHEMA.TABLES WHERE LOWER(TABLE_NAME) = 'contest_participants'",
+                    Boolean.class);
+            return Boolean.TRUE.equals(hasDuration)
+                    && Boolean.TRUE.equals(hasContestProblems)
+                    && Boolean.TRUE.equals(hasContestParticipants);
+        } catch (Exception ex) {
+            log.debug("Contest schema check failed: {}", ex.getMessage());
+            return false;
         }
     }
 }
