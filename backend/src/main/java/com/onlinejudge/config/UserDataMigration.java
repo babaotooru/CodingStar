@@ -13,6 +13,11 @@ public class UserDataMigration {
 
     @PostConstruct
     public void fixNullValues() {
+        if (!usersTableExists()) {
+            System.out.println("Skipping user data migration: users table does not exist yet.");
+            return;
+        }
+
         System.out.println("Fixing NULL values in users table...");
 
         jdbcTemplate.execute(
@@ -24,5 +29,16 @@ public class UserDataMigration {
                         "WHERE total_solved IS NULL OR total_submissions IS NULL OR score IS NULL OR stars IS NULL");
 
         System.out.println("✓ User data migration completed");
+    }
+
+    private boolean usersTableExists() {
+        try {
+            Boolean exists = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) > 0 FROM INFORMATION_SCHEMA.TABLES WHERE LOWER(TABLE_NAME) = 'users'",
+                    Boolean.class);
+            return Boolean.TRUE.equals(exists);
+        } catch (Exception ex) {
+            return false;
+        }
     }
 }
