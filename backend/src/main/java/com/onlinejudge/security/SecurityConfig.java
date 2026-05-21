@@ -85,9 +85,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Support a comma-separated list in the app.cors.allowed-origins property
+        // Support explicit origins plus Vercel preview URLs and localhost for
+        // development.
         List<String> origins = List.of(appCorsAllowedOrigins.split("\\s*,\\s*"));
         config.setAllowedOrigins(origins);
+        config.setAllowedOriginPatterns(List.of("https://*.vercel.app", "http://localhost:*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
