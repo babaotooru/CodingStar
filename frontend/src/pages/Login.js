@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+// Default to production backend; override in development via REACT_APP_API_URL
+const API_BASE = process.env.REACT_APP_API_URL || 'https://codingstar.onrender.com';
 const OAUTH_BASE = API_BASE.replace('/api', '');
 
 function Login() {

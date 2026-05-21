@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
+// Production default points to the Render backend URL; in dev set REACT_APP_API_URL locally
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://codingstar.onrender.com/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

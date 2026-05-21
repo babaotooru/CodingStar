@@ -52,12 +52,6 @@ function Dashboard() {
     fetchData();
   }, [user, user?.username]); // Re-fetch when user or username changes
 
-  const stats = [
-    { value: '5000+', label: 'Coding Problems', color: 'from-green-500 to-emerald-600', icon: '📝' },
-    { value: '5', label: 'Languages', color: 'from-primary-500 to-blue-600', icon: '🌐' },
-    { value: 'Daily', label: 'Contests', color: 'from-yellow-500 to-orange-600', icon: '🏆' },
-  ];
-
   const features = [
     { title: 'Multiple Languages', desc: 'Java, Python, C++, C, and JavaScript', icon: '🌐', gradient: 'from-blue-500/10 to-cyan-500/10' },
     { title: 'Instant Feedback', desc: 'Real-time results with runtime & memory stats', icon: '⚡', gradient: 'from-yellow-500/10 to-orange-500/10' },

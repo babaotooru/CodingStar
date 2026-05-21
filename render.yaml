@@ -1,0 +1,36 @@
+# Render service template for deploying the backend. Fill the environment variables in the Render dashboard
+# or replace the `RENDER_SECRET_*` placeholders with your actual secret names. This file is a template
+# and is intended to be a quick reference for creating a Render web service.
+service:
+  name: online-judge-backend
+  type: web
+  env: docker
+  region: oregon
+  plan: free
+
+# Build and start commands (Render will build the Docker image from backend/Dockerfile)
+buildCommand: mvn -DskipTests package
+startCommand: java -jar target/*.jar
+dockerfilePath: backend/Dockerfile
+
+# Environment variables required by the application. Do NOT commit secrets; add them through Render's
+# dashboard under the service's Environment section. The right-hand values are the env var names you
+# should create in Render (or replace them with actual sensitive values there).
+env:
+  SPRING_PROFILES_ACTIVE: prod
+  SPRING_DATASOURCE_URL: ${RENDER_POSTGRES_URL}
+  SPRING_DATASOURCE_USERNAME: ${RENDER_POSTGRES_USER}
+  SPRING_DATASOURCE_PASSWORD: ${RENDER_POSTGRES_PASSWORD}
+  # Frontend URL and allowed CORS origins for the deployed site.
+  APP_CORS_ALLOWED_ORIGINS: "https://coding-star.vercel.app"
+  APP_FRONTEND_URL: "https://coding-star.vercel.app"
+  JWT_SECRET: ${JWT_SECRET}
+  GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+  GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+  GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+  GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+
+# Optional: if you want to provide a health check path
+health:
+  path: /actuator/health
+  interval: 30

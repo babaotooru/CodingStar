@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DifficultyBadge from './DifficultyBadge';
 
 function Editorial({ problem }) {
   const [showHints, setShowHints] = useState([]);

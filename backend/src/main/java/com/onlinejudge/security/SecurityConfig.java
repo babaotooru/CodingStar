@@ -1,6 +1,7 @@
 package com.onlinejudge.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,12 @@ public class SecurityConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
     private final HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository;
 
+    @Value("${app.cors.allowed-origins:http://localhost:3000}")
+    private String appCorsAllowedOrigins;
+
+    @Value("${app.frontend-url:http://localhost:3000}")
+    private String appFrontendUrl;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -46,7 +53,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/submissions/all/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/submissions/stats/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/contests", "/api/contests/active").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/contests/{id}", "/api/contests/{id}/rankings").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/contests/{id}", "/api/contests/{id}/rankings")
+                        .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/problems/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/problems/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/problems/**").hasRole("ADMIN")
@@ -58,7 +66,16 @@ public class SecurityConfig {
                         .failureHandler((request, response, exception) -> {
                             System.err.println("OAuth2 login failed: " + exception.getMessage());
                             exception.printStackTrace();
-                            response.sendRedirect("http://localhost:3000/login?error=oauth_failed");
+                            // Redirect to configured frontend URL on failure
+                            try {
+                                response.sendRedirect(appFrontendUrl + "/login?error=oauth_failed");
+                            } catch (Exception ex) {
+                                // fallback to localhost if redirect fails
+                                try {
+                                    response.sendRedirect("http://localhost:3000/login?error=oauth_failed");
+                                } catch (Exception ignored) {
+                                }
+                            }
                         }))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -68,7 +85,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        // Support a comma-separated list in the app.cors.allowed-origins property
+        List<String> origins = List.of(appCorsAllowedOrigins.split("\\s*,\\s*"));
+        config.setAllowedOrigins(origins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

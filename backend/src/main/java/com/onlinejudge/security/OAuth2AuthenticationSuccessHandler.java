@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.util.Map;
@@ -23,6 +24,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+
+    @Value("${app.frontend-url:http://localhost:3000}")
+    private String appFrontendUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -53,7 +57,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         } else {
             // Check if email already exists (link to existing account)
             Optional<User> emailUser = (email != null && !email.isBlank())
-                    ? userRepository.findByEmail(email) : Optional.empty();
+                    ? userRepository.findByEmail(email)
+                    : Optional.empty();
             if (emailUser.isPresent()) {
                 user = emailUser.get();
                 user.setAuthProvider(provider);
@@ -75,7 +80,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String token = jwtUtil.generateToken(user.getUsername());
 
-        String redirectUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth-callback")
+        String redirectUrl = UriComponentsBuilder.fromUriString(appFrontendUrl + "/oauth-callback")
                 .queryParam("token", token)
                 .queryParam("username", user.getUsername())
                 .queryParam("email", user.getEmail() != null ? user.getEmail() : "")
@@ -95,7 +100,37 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     private String extractEmail(OAuth2User user, String registrationId) {
-        return user.getAttribute("email");
+        // GitHub may not return 'email' directly if the user keeps it private.
+        // Try common locations: 'email', 'emails' (list), or nested structures.
+        Object emailAttr = user.getAttribute("email");
+        if (emailAttr != null)
+            return emailAttr.toString();
+
+        Object emailsObj = user.getAttribute("emails");
+        if (emailsObj instanceof Iterable) {
+            for (Object item : (Iterable<?>) emailsObj) {
+                if (item == null)
+                    continue;
+                if (item instanceof String)
+                    return item.toString();
+                if (item instanceof java.util.Map) {
+                    Object e = ((java.util.Map<?, ?>) item).get("email");
+                    Object primary = ((java.util.Map<?, ?>) item).get("primary");
+                    if (e != null)
+                        return e.toString();
+                    if (primary != null && Boolean.parseBoolean(primary.toString())) {
+                        Object em = ((java.util.Map<?, ?>) item).get("email");
+                        if (em != null)
+                            return em.toString();
+                    }
+                }
+            }
+        }
+
+        // As a last resort, some providers expose 'login' which we can use as a
+        // username
+        Object login = user.getAttribute("login");
+        return login != null ? null : null; // prefer null when no email available
     }
 
     private String extractName(OAuth2User user, String registrationId) {
