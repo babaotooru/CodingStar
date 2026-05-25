@@ -16,6 +16,8 @@ function ContestDetail() {
   const [activeTab, setActiveTab] = useState('problems');
   const [timeLeft, setTimeLeft] = useState('');
 
+  const asArray = (value) => (Array.isArray(value) ? value : []);
+
   const fetchContest = useCallback(async () => {
     try {
       const [contestRes, rankRes] = await Promise.all([
@@ -23,7 +25,7 @@ function ContestDetail() {
         contestAPI.getRankings(id),
       ]);
       setContest(contestRes.data);
-      setRankings(rankRes.data);
+      setRankings(asArray(rankRes.data));
 
       if (user) {
         try {
@@ -168,7 +170,7 @@ function ContestDetail() {
       {/* Problems Tab */}
       {activeTab === 'problems' && (
         <div className="bg-dark-900 rounded-xl border border-dark-700 overflow-hidden">
-          {contest.problems && contest.problems.length > 0 ? (
+          {asArray(contest.problems).length > 0 ? (
             <table className="w-full">
               <thead>
                 <tr className="border-b border-dark-700">
@@ -179,7 +181,7 @@ function ContestDetail() {
                 </tr>
               </thead>
               <tbody>
-                {contest.problems.map((problem, idx) => (
+                {asArray(contest.problems).map((problem, idx) => (
                   <tr key={problem.id} className="border-b border-dark-800 hover:bg-dark-800/50 transition-colors">
                     <td className="px-6 py-4 text-dark-400 font-medium">{String.fromCharCode(65 + idx)}</td>
                     <td className="px-6 py-4 text-white font-medium">{problem.title}</td>

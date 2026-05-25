@@ -57,12 +57,14 @@ function SQLPractice() {
   const [difficulty, setDifficulty] = useState('ALL');
   const [topicCounts, setTopicCounts] = useState({});
 
+  const asArray = (value) => (Array.isArray(value) ? value : []);
+
   useEffect(() => {
     const fetchProblems = async () => {
       setLoading(true);
       try {
         const resp = await problemsAPI.getByCategory('SQL', 0, 1000);
-        const mapped = (resp.data.content || []).map((problem) => ({
+        const mapped = asArray(resp.data?.content).map((problem) => ({
           ...problem,
           sqlTopic: inferSQLTopic(problem),
         }));

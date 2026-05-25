@@ -15,6 +15,8 @@ function Problems() {
   const [jumpPage, setJumpPage] = useState('');
   const [shuffled, setShuffled] = useState(false);
 
+  const asArray = (value) => (Array.isArray(value) ? value : []);
+
   const formatCount = (value) => {
     const numericValue = Number(value);
     return Number.isFinite(numericValue) ? numericValue.toLocaleString() : '0';
@@ -31,7 +33,7 @@ function Problems() {
       } else {
         response = await problemsAPI.getAll(page, 50);
       }
-      setProblems(response.data.content);
+      setProblems(asArray(response.data?.content));
       setTotalPages(response.data?.totalPages || 0);
       setTotalElements(response.data?.totalElements || 0);
       setShuffled(false);

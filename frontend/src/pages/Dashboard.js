@@ -11,6 +11,8 @@ function Dashboard() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
 
+  const asArray = (value) => (Array.isArray(value) ? value : []);
+
   const formatCount = (value) => {
     const numericValue = Number(value);
     return Number.isFinite(numericValue) ? numericValue.toLocaleString() : '0';
@@ -31,7 +33,7 @@ function Dashboard() {
           leaderboardAPI.get(),
           userAPI.getCount(),
         ]);
-        setLeaderboard(lbRes.data.slice(0, 5));
+        setLeaderboard(asArray(lbRes.data).slice(0, 5));
         setTotalUsers(countRes.data?.total ?? countRes.data?.totalUsers ?? countRes.data?.count ?? 0);
       } catch {}
 
@@ -47,7 +49,7 @@ function Dashboard() {
           if (solvedCount > 200) recDifficulty = 'HARD';
 
           const recRes = await problemsAPI.getByDifficulty(recDifficulty, Math.floor(Math.random() * 10), 6);
-          setRecommended(recRes.data.content || []);
+          setRecommended(asArray(recRes.data?.content));
         } catch (err) {
           console.error('Failed to fetch user profile:', err);
           setProfile(null);

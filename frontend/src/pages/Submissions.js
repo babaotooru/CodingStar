@@ -11,6 +11,8 @@ function Submissions() {
   const [expandedId, setExpandedId] = useState(null);
   const [viewMode, setViewMode] = useState('my'); // 'my' or 'all'
 
+  const asArray = (value) => (Array.isArray(value) ? value : []);
+
   useEffect(() => {
     const fetchSubmissions = async () => {
       setLoading(true);
@@ -18,8 +20,8 @@ function Submissions() {
         const response = viewMode === 'my'
           ? await submissionsAPI.getMy(page, 20)
           : await submissionsAPI.getAll(page, 20);
-        setSubmissions(response.data.content);
-        setTotalPages(response.data.totalPages);
+        setSubmissions(asArray(response.data?.content));
+        setTotalPages(response.data?.totalPages || 0);
       } catch (err) {
         console.error('Failed to fetch submissions:', err);
       } finally {

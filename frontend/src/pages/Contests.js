@@ -8,11 +8,13 @@ function Contests() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
 
+  const asArray = (value) => (Array.isArray(value) ? value : []);
+
   useEffect(() => {
     const fetchContests = async () => {
       try {
         const response = await contestAPI.getAll();
-        setContests(response.data);
+        setContests(asArray(response.data));
       } catch (err) {
         console.error('Failed to fetch contests:', err);
       } finally {

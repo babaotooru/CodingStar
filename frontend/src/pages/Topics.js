@@ -40,11 +40,13 @@ function Topics() {
   const [difficulty, setDifficulty] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const asArray = (value) => (Array.isArray(value) ? value : []);
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await problemsAPI.getCategories();
-        setCategories(response.data);
+        setCategories(asArray(response.data));
       } catch (err) {
         console.error('Failed to fetch categories:', err);
       } finally {
@@ -60,13 +62,13 @@ function Topics() {
     try {
       const diff = difficulty !== 'ALL' ? difficulty : null;
       const response = await problemsAPI.getByCategory(selectedTopic, page, 50, diff);
-      let filtered = response.data.content;
+      let filtered = asArray(response.data?.content);
       if (searchQuery) {
         filtered = filtered.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()));
       }
       setProblems(filtered);
-      setTotalPages(response.data.totalPages);
-      setTotalElements(response.data.totalElements);
+      setTotalPages(response.data?.totalPages || 0);
+      setTotalElements(response.data?.totalElements || 0);
     } catch (err) {
       console.error('Failed to fetch problems:', err);
     } finally {

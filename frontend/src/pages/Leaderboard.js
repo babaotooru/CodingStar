@@ -6,11 +6,13 @@ function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const asArray = (value) => (Array.isArray(value) ? value : []);
+
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
         const response = await leaderboardAPI.get();
-        setLeaderboard(response.data);
+        setLeaderboard(asArray(response.data));
       } catch (err) {
         console.error('Failed to fetch leaderboard:', err);
       } finally {
