@@ -11,6 +11,11 @@ function Dashboard() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
 
+  const formatCount = (value) => {
+    const numericValue = Number(value);
+    return Number.isFinite(numericValue) ? numericValue.toLocaleString() : '0';
+  };
+
   useEffect(() => {
     setVisible(true);
     
@@ -27,7 +32,7 @@ function Dashboard() {
           userAPI.getCount(),
         ]);
         setLeaderboard(lbRes.data.slice(0, 5));
-        setTotalUsers(countRes.data.total);
+        setTotalUsers(countRes.data?.total ?? countRes.data?.totalUsers ?? countRes.data?.count ?? 0);
       } catch {}
 
       if (user) {
@@ -201,7 +206,7 @@ function Dashboard() {
             <div className="grid grid-cols-3 gap-3">
               {[
                 { value: '5000+', label: 'Problems', icon: '📝', color: 'from-green-500 to-emerald-600' },
-                { value: totalUsers.toLocaleString(), label: 'Users', icon: '👥', color: 'from-primary-500 to-blue-600' },
+                { value: formatCount(totalUsers), label: 'Users', icon: '👥', color: 'from-primary-500 to-blue-600' },
                 { value: 'Daily', label: 'Contests', icon: '🏆', color: 'from-yellow-500 to-orange-600' },
               ].map((stat, i) => (
                 <div key={i} className="group relative bg-dark-800/40 rounded-2xl border border-dark-700/50 p-5 text-center hover:border-dark-600 transition-all hover:-translate-y-1">
@@ -278,7 +283,7 @@ function Dashboard() {
         <section className={`text-center transition-all duration-1000 delay-400 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="bg-gradient-to-r from-primary-600/10 via-purple-600/10 to-primary-600/10 rounded-2xl border border-primary-500/20 p-10">
             <h2 className="text-2xl font-bold text-white mb-3">Ready to begin?</h2>
-            <p className="text-dark-400 mb-6">Join {totalUsers > 0 ? totalUsers.toLocaleString() : 'thousands of'} developers improving their skills every day.</p>
+            <p className="text-dark-400 mb-6">Join {totalUsers > 0 ? formatCount(totalUsers) : 'thousands of'} developers improving their skills every day.</p>
             <Link
               to="/register"
               className="inline-block px-8 py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-500 transition-all shadow-lg shadow-primary-600/20 hover:-translate-y-0.5"

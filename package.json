@@ -1,13 +1,17 @@
 {
   "dependencies": {
-    "pg": "^8.20.0"
+    "csv-parse": "^6.2.1",
+    "csvtojson": "^2.0.14",
+    "minimist": "^1.2.8",
+    "pg": "^8.21.0"
   },
   "name": "online-coding-judge-system",
   "version": "1.0.0",
   "description": "A full-stack online coding judge platform similar to LeetCode/HackerRank, built with **Spring Boot** and **React**.",
-  "main": "generate-hard-problems.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed:problems": "node scripts/seed_problems.js",
+    "preview:import": "node scripts/preview_import.js --limit=20"
   },
   "keywords": [],
   "author": "",

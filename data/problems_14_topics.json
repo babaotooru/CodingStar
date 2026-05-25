@@ -1,0 +1,199 @@
+{
+  "topics": [
+    { "id": 1, "name": "Arrays" },
+    { "id": 2, "name": "Strings" },
+    { "id": 3, "name": "Linked Lists" },
+    { "id": 4, "name": "Trees" },
+    { "id": 5, "name": "Graphs" },
+    { "id": 6, "name": "Dynamic Programming" },
+    { "id": 7, "name": "Sorting & Searching" },
+    { "id": 8, "name": "Greedy" },
+    { "id": 9, "name": "Backtracking" },
+    { "id": 10, "name": "Math" },
+    { "id": 11, "name": "Bit Manipulation" },
+    { "id": 12, "name": "Hashing" },
+    { "id": 13, "name": "Geometry" },
+    { "id": 14, "name": "Database" }
+  ],
+  "problems": [
+    {
+      "id": 1001,
+      "title": "Two Sum",
+      "topic_id": 1,
+      "difficulty": "Easy",
+      "statement": "Given an array of integers, return indices of the two numbers such that they add up to a specific target.",
+      "testcases": [
+        { "input": "[2,7,11,15]\n9", "output": "[0,1]" },
+        { "input": "[3,2,4]\n6", "output": "[1,2]" }
+      ],
+      "canonical_answer": "// typical hash map solution"
+    },
+    {
+      "id": 1002,
+      "title": "Best Time to Buy and Sell Stock",
+      "topic_id": 1,
+      "difficulty": "Easy",
+      "statement": "Given prices, find max profit.",
+      "testcases": [
+        { "input": "[7,1,5,3,6,4]", "output": "5" }
+      ],
+      "canonical_answer": "// track min and max profit"
+    },
+    {
+      "id": 1003,
+      "title": "Reverse String",
+      "topic_id": 2,
+      "difficulty": "Easy",
+      "statement": "Reverse a string in-place.",
+      "testcases": [
+        { "input": "hello", "output": "olleh" }
+      ],
+      "canonical_answer": "// two-pointer swap"
+    },
+    {
+      "id": 1004,
+      "title": "Palindrome Number",
+      "topic_id": 2,
+      "difficulty": "Easy",
+      "statement": "Determine whether an integer is a palindrome.",
+      "testcases": [
+        { "input": "121", "output": "true" },
+        { "input": "-121", "output": "false" }
+      ],
+      "canonical_answer": "// reverse or compare digits"
+    },
+    {
+      "id": 2001,
+      "title": "Merge Two Sorted Lists",
+      "topic_id": 3,
+      "difficulty": "Easy",
+      "statement": "Merge two sorted linked lists and return it as a new list.",
+      "testcases": [
+        { "input": "[1,2,4]\n[1,3,4]", "output": "[1,1,2,3,4,4]" }
+      ],
+      "canonical_answer": "// iterative merge"
+    },
+    {
+      "id": 3001,
+      "title": "Maximum Depth of Binary Tree",
+      "topic_id": 4,
+      "difficulty": "Easy",
+      "statement": "Given a binary tree, find its maximum depth.",
+      "testcases": [
+        { "input": "[3,9,20,null,null,15,7]", "output": "3" }
+      ],
+      "canonical_answer": "// DFS recursion"
+    },
+    {
+      "id": 4001,
+      "title": "Number of Islands",
+      "topic_id": 5,
+      "difficulty": "Medium",
+      "statement": "Given a 2D grid, count islands of '1's.",
+      "testcases": [
+        { "input": "[[1,1,1,1,0],[1,1,0,1,0],[1,1,0,0,0],[0,0,0,0,0]]", "output": "1" }
+      ],
+      "canonical_answer": "// BFS or DFS grid floodfill"
+    },
+    {
+      "id": 5001,
+      "title": "Climbing Stairs",
+      "topic_id": 6,
+      "difficulty": "Easy",
+      "statement": "Count ways to climb n stairs using 1 or 2 steps.",
+      "testcases": [
+        { "input": "2", "output": "2" },
+        { "input": "3", "output": "3" }
+      ],
+      "canonical_answer": "// DP or Fibonacci"
+    },
+    {
+      "id": 6001,
+      "title": "Binary Search",
+      "topic_id": 7,
+      "difficulty": "Easy",
+      "statement": "Implement binary search on sorted array.",
+      "testcases": [
+        { "input": "[1,2,3,4,5]\n3", "output": "2" }
+      ],
+      "canonical_answer": "// iterative binary search"
+    },
+    {
+      "id": 7001,
+      "title": "Interval Scheduling (Greedy)",
+      "topic_id": 8,
+      "difficulty": "Medium",
+      "statement": "Given intervals, select maximum non-overlapping intervals.",
+      "testcases": [
+        { "input": "[[1,2],[2,3],[3,4]]", "output": "3" }
+      ],
+      "canonical_answer": "// sort by end time"
+    },
+    {
+      "id": 8001,
+      "title": "Subsets (Backtracking)",
+      "topic_id": 9,
+      "difficulty": "Medium",
+      "statement": "Return all possible subsets of a set of numbers.",
+      "testcases": [
+        { "input": "[1,2,3]", "output": "[[],[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]" }
+      ],
+      "canonical_answer": "// backtracking recursion"
+    },
+    {
+      "id": 9001,
+      "title": "Factorial (Math)",
+      "topic_id": 10,
+      "difficulty": "Easy",
+      "statement": "Compute factorial of n.",
+      "testcases": [
+        { "input": "5", "output": "120" }
+      ],
+      "canonical_answer": "// iterative or recursive"
+    },
+    {
+      "id": 10001,
+      "title": "Single Number (Bit)",
+      "topic_id": 11,
+      "difficulty": "Easy",
+      "statement": "Given array where every element appears twice except one, find the single one.",
+      "testcases": [
+        { "input": "[2,2,1]", "output": "1" }
+      ],
+      "canonical_answer": "// xor all numbers"
+    },
+    {
+      "id": 11001,
+      "title": "Two Sum via Hash (Hashing)",
+      "topic_id": 12,
+      "difficulty": "Easy",
+      "statement": "Alternative hash-based two-sum example.",
+      "testcases": [
+        { "input": "[2,7,11,15]\n9", "output": "[0,1]" }
+      ],
+      "canonical_answer": "// map complements"
+    },
+    {
+      "id": 12001,
+      "title": "Point in Polygon (Geometry)",
+      "topic_id": 13,
+      "difficulty": "Hard",
+      "statement": "Determine whether a point is inside a polygon.",
+      "testcases": [
+        { "input": "polygon coords...\npoint...", "output": "true/false" }
+      ],
+      "canonical_answer": "// ray casting algorithm"
+    },
+    {
+      "id": 13001,
+      "title": "Normalize SQL Query (Database)",
+      "topic_id": 14,
+      "difficulty": "Medium",
+      "statement": "Given a table, write SQL to normalize data into 3NF.",
+      "testcases": [
+        { "input": "schema and sample rows", "output": "SQL statements" }
+      ],
+      "canonical_answer": "-- example SQL normalizing tables"
+    }
+  ]
+}

@@ -15,6 +15,11 @@ function Problems() {
   const [jumpPage, setJumpPage] = useState('');
   const [shuffled, setShuffled] = useState(false);
 
+  const formatCount = (value) => {
+    const numericValue = Number(value);
+    return Number.isFinite(numericValue) ? numericValue.toLocaleString() : '0';
+  };
+
   const fetchProblems = useCallback(async () => {
     setLoading(true);
     try {
@@ -27,8 +32,8 @@ function Problems() {
         response = await problemsAPI.getAll(page, 50);
       }
       setProblems(response.data.content);
-      setTotalPages(response.data.totalPages);
-      setTotalElements(response.data.totalElements || 0);
+      setTotalPages(response.data?.totalPages || 0);
+      setTotalElements(response.data?.totalElements || 0);
       setShuffled(false);
     } catch (err) {
       console.error('Failed to fetch problems:', err);
@@ -84,7 +89,7 @@ function Problems() {
         <div className="flex items-center gap-3">
           <div>
             <h1 className="text-2xl font-bold text-white">Problem Set</h1>
-            <p className="text-dark-400 text-sm mt-1">{totalElements.toLocaleString()} problems available</p>
+            <p className="text-dark-400 text-sm mt-1">{formatCount(totalElements)} problems available</p>
           </div>
           <button
             onClick={handleShuffle}
@@ -235,7 +240,7 @@ function Problems() {
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6 px-1">
           <span className="text-dark-500 text-sm">
-            Showing {page * 50 + 1}-{Math.min((page + 1) * 50, totalElements)} of {totalElements.toLocaleString()}
+            Showing {page * 50 + 1}-{Math.min((page + 1) * 50, totalElements)} of {formatCount(totalElements)}
           </span>
           <div className="flex items-center gap-1.5">
             <button

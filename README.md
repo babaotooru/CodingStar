@@ -113,8 +113,6 @@ docker-compose up --build
 #### Backend
 ```bash
 cd backend
-# Create database: CREATE DATABASE online_judge;
-# Run schema.sql to seed data
 mvn spring-boot:run
 ```
 

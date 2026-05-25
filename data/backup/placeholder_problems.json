@@ -1,0 +1,10 @@
+[
+    {
+        "id":  52018,
+        "title":  "Maximum Product Subarray",
+        "category":  "Arrays",
+        "description":  "Find contiguous subarray with largest product",
+        "inputFormat":  "Input format varies",
+        "outputFormat":  "Output format varies"
+    }
+]

@@ -30,7 +30,7 @@ function Submissions() {
   }, [page, viewMode]);
 
   const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleString();
+    return dateStr ? new Date(dateStr).toLocaleString() : '—';
   };
 
   if (loading) return <LoadingSpinner text="Loading submissions..." />;

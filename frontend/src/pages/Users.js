@@ -8,6 +8,11 @@ function Users() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const formatCount = (value) => {
+    const numericValue = Number(value);
+    return Number.isFinite(numericValue) ? numericValue.toLocaleString() : '0';
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -15,8 +20,8 @@ function Users() {
           leaderboardAPI.get(),
           userAPI.getCount(),
         ]);
-        setUsers(leaderboardRes.data);
-        setTotalUsers(countRes.data.total);
+        setUsers(leaderboardRes.data || []);
+        setTotalUsers(countRes.data?.total ?? countRes.data?.totalUsers ?? countRes.data?.count ?? 0);
       } catch (err) {
         console.error('Failed to fetch users:', err);
       } finally {
@@ -57,7 +62,7 @@ function Users() {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         <div className="bg-dark-800/40 rounded-2xl border border-dark-700/50 p-5 text-center">
-          <div className="text-3xl font-bold text-white">{totalUsers.toLocaleString()}</div>
+          <div className="text-3xl font-bold text-white">{formatCount(totalUsers)}</div>
           <div className="text-dark-400 text-sm mt-1">Total Users</div>
         </div>
         <div className="bg-dark-800/40 rounded-2xl border border-dark-700/50 p-5 text-center">
@@ -68,13 +73,13 @@ function Users() {
         </div>
         <div className="bg-dark-800/40 rounded-2xl border border-dark-700/50 p-5 text-center">
           <div className="text-3xl font-bold text-yellow-400">
-            {users.reduce((sum, u) => sum + u.stars, 0).toLocaleString()}
+            {formatCount(users.reduce((sum, u) => sum + (u.stars || 0), 0))}
           </div>
           <div className="text-dark-400 text-sm mt-1">Total Stars</div>
         </div>
         <div className="bg-dark-800/40 rounded-2xl border border-dark-700/50 p-5 text-center">
           <div className="text-3xl font-bold text-primary-400">
-            {users.reduce((sum, u) => sum + u.totalSolved, 0).toLocaleString()}
+            {formatCount(users.reduce((sum, u) => sum + (u.totalSolved || 0), 0))}
           </div>
           <div className="text-dark-400 text-sm mt-1">Problems Solved</div>
         </div>
