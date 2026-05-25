@@ -12,6 +12,9 @@ function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
 
+  const displayName = user?.username || (user?.email ? user.email.split('@')[0] : 'User');
+  const avatarInitial = (displayName && displayName.charAt) ? displayName.charAt(0).toUpperCase() : 'U';
+
   const handleLogout = () => {
     logout();
     setProfileOpen(false);
@@ -112,9 +115,9 @@ function Navbar() {
                   className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-dark-800 transition-all"
                 >
                   <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg">
-                    {user.username.charAt(0).toUpperCase()}
+                    {avatarInitial}
                   </div>
-                  <span className="text-dark-300 text-sm font-medium max-w-[120px] truncate">{user.username}</span>
+                  <span className="text-dark-300 text-sm font-medium max-w-[120px] truncate">{displayName}</span>
                   <svg className={`w-4 h-4 text-dark-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
@@ -124,7 +127,7 @@ function Navbar() {
                 {profileOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-dark-800 rounded-xl border border-dark-600 shadow-2xl py-2 animate-fadeIn">
                     <div className="px-4 py-3 border-b border-dark-700">
-                      <p className="text-white font-medium text-sm">{user.username}</p>
+                      <p className="text-white font-medium text-sm">{displayName}</p>
                       <p className="text-dark-400 text-xs mt-0.5">{user.email || 'No email'}</p>
                     </div>
                     <Link to="/profile" onClick={() => setProfileOpen(false)}
