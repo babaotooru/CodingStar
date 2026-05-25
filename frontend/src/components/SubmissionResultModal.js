@@ -223,7 +223,7 @@ function SubmissionResultModal({ result, stats, onClose, problemTitle, problemId
           </div>
 
           <h2 className={`text-2xl font-bold ${isAccepted ? 'text-green-400' : 'text-red-400'}`}>
-            {result.status.replace(/_/g, ' ')}
+            {(result?.status || '').replace(/_/g, ' ')}
           </h2>
           <p className="text-dark-400 text-sm mt-1">
             {result.testCasesPassed}/{result.totalTestCases} test cases passed

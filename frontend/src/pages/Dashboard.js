@@ -69,7 +69,7 @@ function Dashboard() {
           <div className="bg-gradient-to-br from-dark-800/60 via-dark-800/40 to-primary-900/10 rounded-2xl border border-dark-700/50 p-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
               <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-2xl shadow-primary-500/20">
-                {profile.username.charAt(0).toUpperCase()}
+                {(profile && profile.username ? profile.username.charAt(0).toUpperCase() : '?')}
               </div>
               <div className="flex-1">
                 <h1 className="text-2xl sm:text-3xl font-bold text-white">
@@ -236,8 +236,8 @@ function Dashboard() {
                       entry.rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-400' :
                       entry.rank === 3 ? 'bg-gradient-to-br from-orange-400 to-amber-600' :
                       'bg-dark-700'
-                    }`}>{entry.username.charAt(0).toUpperCase()}</div>
-                    <span className="text-white text-sm font-medium">{entry.username}</span>
+                    }`}>{(entry && entry.username) ? entry.username.charAt(0).toUpperCase() : '?'}</div>
+                    <span className="text-white text-sm font-medium">{entry && entry.username ? entry.username : 'Unknown'}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-yellow-400 text-sm font-bold">{entry.stars} ⭐</span>

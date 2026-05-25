@@ -3,9 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
-// Default to production backend; override in development via REACT_APP_API_URL
-const API_BASE = process.env.REACT_APP_API_URL || 'https://codingstar.onrender.com';
-const OAUTH_BASE = API_BASE.replace('/api', '');
+const isLocalhost =
+  typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname);
+
+// Prefer local backend when the app is served locally so OAuth and API calls stay on localhost.
+const API_BASE = process.env.REACT_APP_API_URL || (isLocalhost ? 'http://localhost:8080' : 'https://codingstar.onrender.com');
+const OAUTH_BASE = (API_BASE || '').replace('/api', '');
 
 function Register() {
   const [username, setUsername] = useState('');

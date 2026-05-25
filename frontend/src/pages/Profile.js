@@ -40,13 +40,13 @@ function Profile() {
         <div className="relative p-6 sm:p-8">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
             <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-3xl font-bold shadow-xl shadow-primary-500/20 flex-shrink-0">
-              {profile.username.charAt(0).toUpperCase()}
+              {((profile.username || profile.email || '?').charAt ? (profile.username || profile.email || '?').charAt(0).toUpperCase() : '?')}
             </div>
             <div className="text-center sm:text-left flex-1">
-              <h1 className="text-2xl font-bold text-white">{profile.username}</h1>
+              <h1 className="text-2xl font-bold text-white">{profile.username || (profile.email ? profile.email.split('@')[0] : 'Unknown')}</h1>
               <p className="text-dark-400 text-sm mt-1">{profile.email || 'No email'}</p>
               <p className="text-dark-500 text-xs mt-1">
-                Member since {new Date(profile.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
+                Member since {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : 'Unknown'}
               </p>
             </div>
             {profile.rank && (
