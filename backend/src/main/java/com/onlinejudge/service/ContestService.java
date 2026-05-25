@@ -9,7 +9,6 @@ import com.onlinejudge.entity.Submission;
 import com.onlinejudge.entity.User;
 import com.onlinejudge.exception.ResourceNotFoundException;
 import com.onlinejudge.repository.ContestRepository;
-import com.onlinejudge.repository.ProblemRepository;
 import com.onlinejudge.repository.SubmissionRepository;
 import com.onlinejudge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +24,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@SuppressWarnings("null")
 public class ContestService {
 
     private final ContestRepository contestRepository;
-    private final ProblemRepository problemRepository;
     private final UserRepository userRepository;
     private final SubmissionRepository submissionRepository;
 
@@ -80,7 +79,6 @@ public class ContestService {
 
         List<Problem> problems = contest.getProblems();
         List<User> participants = contest.getParticipants();
-        List<Long> problemIds = problems.stream().map(Problem::getId).collect(Collectors.toList());
 
         List<ContestRankEntry> rankings = new ArrayList<>();
 
@@ -107,7 +105,8 @@ public class ContestService {
                             .filter(s -> s.getStatus() == Submission.Status.ACCEPTED)
                             .findFirst().orElse(null);
                     if (accepted != null) {
-                        timeTaken = (int) Duration.between(contest.getStartTime(), accepted.getSubmittedAt()).toMinutes();
+                        timeTaken = (int) Duration.between(contest.getStartTime(), accepted.getSubmittedAt())
+                                .toMinutes();
                         totalTimePenalty += timeTaken + (attempts - 1) * 5;
                     }
                 }
@@ -132,7 +131,8 @@ public class ContestService {
         }
 
         rankings.sort((a, b) -> {
-            if (b.getTotalScore() != a.getTotalScore()) return b.getTotalScore() - a.getTotalScore();
+            if (b.getTotalScore() != a.getTotalScore())
+                return b.getTotalScore() - a.getTotalScore();
             return a.getTotalTimePenalty() - b.getTotalTimePenalty();
         });
 
@@ -186,7 +186,8 @@ public class ContestService {
 
     private ProblemResponse problemToResponse(Problem p) {
         double rate = p.getTotalSubmissions() > 0
-                ? (double) p.getAcceptedSubmissions() / p.getTotalSubmissions() * 100 : 0;
+                ? (double) p.getAcceptedSubmissions() / p.getTotalSubmissions() * 100
+                : 0;
         return ProblemResponse.builder()
                 .id(p.getId())
                 .title(p.getTitle())

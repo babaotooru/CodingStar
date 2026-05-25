@@ -50,16 +50,20 @@ public class User {
     private Role role = Role.USER;
 
     @Column(name = "total_solved")
-    private Integer totalSolved = 0;
+    @Builder.Default
+    private int totalSolved = 0;
 
     @Column(name = "total_submissions")
-    private Integer totalSubmissions = 0;
+    @Builder.Default
+    private int totalSubmissions = 0;
 
     @Column(name = "score")
-    private Integer score = 0;
+    @Builder.Default
+    private int score = 0;
 
     @Column(name = "stars")
-    private Integer stars = 0;
+    @Builder.Default
+    private int stars = 0;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default

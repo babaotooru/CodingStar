@@ -14,18 +14,19 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
-    @Value("${app.frontend-url:http://localhost:3000}")
+    @Value("${app.frontend-url:https://coding-star.vercel.app}")
     private String appFrontendUrl;
 
     @Override
@@ -67,13 +68,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             } else {
                 // Create new user
                 String username = generateUniqueUsername(name);
-                user = User.builder()
+                user = Objects.requireNonNull(User.builder()
                         .username(username)
                         .email(email)
                         .authProvider(provider)
                         .providerId(providerId)
                         .role(User.Role.USER)
-                        .build();
+                        .build());
                 userRepository.save(user);
             }
         }

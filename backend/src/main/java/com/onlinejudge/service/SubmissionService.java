@@ -19,6 +19,7 @@ import java.util.HashMap;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@SuppressWarnings("null")
 public class SubmissionService {
 
         private final SubmissionRepository submissionRepository;
@@ -207,7 +208,8 @@ public class SubmissionService {
         }
 
         private Map<String, Integer> buildDistribution(List<Integer> values, int currentValue) {
-                if (values.isEmpty()) return Map.of();
+                if (values.isEmpty())
+                        return Map.of();
                 int min = values.stream().mapToInt(Integer::intValue).min().orElse(0);
                 int max = values.stream().mapToInt(Integer::intValue).max().orElse(1);
                 int bucketCount = 10;
@@ -219,7 +221,7 @@ public class SubmissionService {
                         int bucket = Math.min((val - min) / bucketSize, bucketCount - 1);
                         int bucketStart = min + bucket * bucketSize;
                         String key = String.valueOf(bucketStart);
-                        distribution.merge(key, 1, Integer::sum);
+                        distribution.put(key, distribution.getOrDefault(key, 0) + 1);
                 }
                 return distribution;
         }

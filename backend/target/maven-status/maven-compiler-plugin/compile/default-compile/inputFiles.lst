@@ -46,7 +46,6 @@ E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\secu
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\security\SecurityConfig.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\service\AuthService.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\service\CodeExecutionService.java
-E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\service\ComprehensiveProblemGenerator.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\service\ContestSchedulerService.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\service\ContestService.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\service\LeaderboardService.java

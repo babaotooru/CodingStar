@@ -4,7 +4,6 @@ import com.onlinejudge.dto.LeaderboardEntry;
 import com.onlinejudge.entity.User;
 import com.onlinejudge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ public class LeaderboardService {
 
     private final UserRepository userRepository;
 
-    //@Cacheable(value = "leaderboard")
+    // @Cacheable(value = "leaderboard")
     public List<LeaderboardEntry> getLeaderboard() {
         List<User> users = userRepository.findTopUsers();
         List<LeaderboardEntry> leaderboard = new ArrayList<>();

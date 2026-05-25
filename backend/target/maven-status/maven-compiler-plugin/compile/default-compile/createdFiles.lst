@@ -30,7 +30,6 @@ com\onlinejudge\entity\User$AuthProvider.class
 com\onlinejudge\service\SubmissionService.class
 com\onlinejudge\service\CodeExecutionService$1.class
 com\onlinejudge\service\SubmissionService$1.class
-com\onlinejudge\service\ComprehensiveProblemGenerator$ProblemTemplate.class
 com\onlinejudge\service\CodeExecutionService$TestResult.class
 com\onlinejudge\config\DatabaseMigration.class
 com\onlinejudge\repository\SubmissionRepository.class
@@ -50,7 +49,6 @@ com\onlinejudge\entity\Submission$SubmissionBuilder.class
 com\onlinejudge\dto\TestCaseRequest.class
 com\onlinejudge\service\AuthService.class
 com\onlinejudge\dto\ContestResponse$ContestResponseBuilder.class
-com\onlinejudge\service\ComprehensiveProblemGenerator.class
 com\onlinejudge\controller\ProblemNoteController.class
 com\onlinejudge\service\CodeExecutionService$ExecutionResult$ExecutionResultBuilder.class
 com\onlinejudge\controller\LeaderboardController.class

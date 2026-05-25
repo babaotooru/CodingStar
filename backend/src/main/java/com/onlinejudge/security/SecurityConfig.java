@@ -2,6 +2,7 @@ package com.onlinejudge.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,11 +32,12 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
     private final HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository;
+    private final ObjectProvider<org.springframework.security.oauth2.client.registration.ClientRegistrationRepository> clientRegistrationRepositoryProvider;
 
-    @Value("${app.cors.allowed-origins:http://localhost:3000}")
+    @Value("${app.cors.allowed-origins:https://coding-star.vercel.app,http://localhost:3000}")
     private String appCorsAllowedOrigins;
 
-    @Value("${app.frontend-url:http://localhost:3000}")
+    @Value("${app.frontend-url:https://coding-star.vercel.app}")
     private String appFrontendUrl;
 
     @Bean
@@ -59,25 +61,28 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/problems/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/problems/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .oauth2Login(oauth2 -> oauth2
-                        .authorizationEndpoint(auth -> auth
-                                .authorizationRequestRepository(cookieAuthorizationRequestRepository))
-                        .successHandler(oAuth2SuccessHandler)
-                        .failureHandler((request, response, exception) -> {
-                            System.err.println("OAuth2 login failed: " + exception.getMessage());
-                            exception.printStackTrace();
-                            // Redirect to configured frontend URL on failure
-                            try {
-                                response.sendRedirect(appFrontendUrl + "/login?error=oauth_failed");
-                            } catch (Exception ex) {
-                                // fallback to localhost if redirect fails
-                                try {
-                                    response.sendRedirect("http://localhost:3000/login?error=oauth_failed");
-                                } catch (Exception ignored) {
-                                }
-                            }
-                        }))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        if (clientRegistrationRepositoryProvider.getIfAvailable() != null) {
+            http.oauth2Login(oauth2 -> oauth2
+                    .authorizationEndpoint(auth -> auth
+                            .authorizationRequestRepository(cookieAuthorizationRequestRepository))
+                    .successHandler(oAuth2SuccessHandler)
+                    .failureHandler((request, response, exception) -> {
+                        System.err.println("OAuth2 login failed: " + exception.getMessage());
+                        exception.printStackTrace();
+                        // Redirect to configured frontend URL on failure
+                        try {
+                            response.sendRedirect(appFrontendUrl + "/login?error=oauth_failed");
+                        } catch (Exception ex) {
+                            // fallback to localhost if redirect fails
+                            try {
+                                response.sendRedirect("http://localhost:3000/login?error=oauth_failed");
+                            } catch (Exception ignored) {
+                            }
+                        }
+                    }));
+        }
 
         return http.build();
     }

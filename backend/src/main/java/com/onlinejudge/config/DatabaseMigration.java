@@ -28,6 +28,24 @@ public class DatabaseMigration implements ApplicationRunner {
         }
 
         try {
+            // Add OAuth-related columns if missing
+            if (!columnExists("users", "phone")) {
+                jdbcTemplate.execute("ALTER TABLE users ADD COLUMN phone VARCHAR(50)");
+                log.info("Database migration: added users.phone column");
+            }
+            if (!columnExists("users", "auth_provider")) {
+                jdbcTemplate.execute("ALTER TABLE users ADD COLUMN auth_provider VARCHAR(20) DEFAULT 'LOCAL'");
+                log.info("Database migration: added users.auth_provider column");
+            }
+            if (!columnExists("users", "provider_id")) {
+                jdbcTemplate.execute("ALTER TABLE users ADD COLUMN provider_id VARCHAR(255)");
+                log.info("Database migration: added users.provider_id column");
+            }
+        } catch (Exception e) {
+            log.debug("OAuth user columns migration skipped or partially applied: {}", e.getMessage());
+        }
+
+        try {
             if (!columnExists("contests", "duration_minutes")) {
                 jdbcTemplate.execute("ALTER TABLE contests ADD COLUMN duration_minutes INT NOT NULL DEFAULT 90");
                 log.info("Database migration: added contests.duration_minutes column");
