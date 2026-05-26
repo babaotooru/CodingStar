@@ -1,2 +1,2 @@
-org.springframework.boot.env.EnvironmentPostProcessor=\
-com.onlinejudge.config.ForceProdDatabaseOverride
+# Intentionally left blank. Production datasource should come from
+# application-prod.properties and Render environment variables.
