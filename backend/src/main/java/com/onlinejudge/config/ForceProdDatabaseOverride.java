@@ -19,6 +19,9 @@ public class ForceProdDatabaseOverride implements EnvironmentPostProcessor {
         // deployed service reads from the canonical production database.
         // This is intentional to avoid deployments accidentally pointing at
         // empty/ephemeral DBs.
+            if (!environment.acceptsProfiles(Profiles.of("prod"))) {
+                return;
+            }
 
         Map<String, Object> overrides = new LinkedHashMap<>();
         overrides.put("spring.datasource.url",
