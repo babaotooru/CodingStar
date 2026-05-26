@@ -15,9 +15,10 @@ public class ForceProdDatabaseOverride implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        if (!environment.acceptsProfiles(Profiles.of("prod"))) {
-            return;
-        }
+        // Always force the production datasource to the Supabase instance to ensure the
+        // deployed service reads from the canonical production database.
+        // This is intentional to avoid deployments accidentally pointing at
+        // empty/ephemeral DBs.
 
         Map<String, Object> overrides = new LinkedHashMap<>();
         overrides.put("spring.datasource.url",
