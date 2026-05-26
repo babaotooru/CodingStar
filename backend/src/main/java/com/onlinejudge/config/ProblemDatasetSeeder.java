@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
@@ -31,9 +33,17 @@ public class ProblemDatasetSeeder implements ApplicationRunner {
     private final ProblemRepository problemRepository;
     private final TestCaseRepository testCaseRepository;
     private final ObjectMapper objectMapper;
+    private final Environment environment;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        // Don't auto-seed when running with the 'prod' profile — prevents overwriting
+        // production data
+        if (environment != null && Arrays.asList(environment.getActiveProfiles()).contains("prod")) {
+            log.info("Skipping problem seed because 'prod' profile is active");
+            return;
+        }
+
         if (problemRepository.count() > 0) {
             log.info("Skipping problem seed: database already contains {} problems", problemRepository.count());
             return;
