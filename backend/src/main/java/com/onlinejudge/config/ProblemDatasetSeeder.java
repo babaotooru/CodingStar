@@ -28,7 +28,7 @@ import java.util.Map;
 @Slf4j
 public class ProblemDatasetSeeder implements ApplicationRunner {
 
-    private static final String DATASET_RESOURCE = "data/problems_14_topics.json";
+    private static final String DATASET_RESOURCE = "realtime_dataset.json";
     private static final int BATCH_SIZE = 100;
 
     private final ProblemRepository problemRepository;
