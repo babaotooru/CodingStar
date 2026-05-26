@@ -40,6 +40,12 @@ public class SecurityConfig {
     @Value("${app.frontend-url:https://coding-star.vercel.app}")
     private String appFrontendUrl;
 
+    @Value("${spring.security.oauth2.client.registration.google.client-id:}")
+    private String googleClientId;
+
+    @Value("${spring.security.oauth2.client.registration.github.client-id:}")
+    private String githubClientId;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -47,9 +53,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/problems/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/problems/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/leaderboard/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/count").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/submissions/all/**").permitAll()
@@ -63,7 +70,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        if (clientRegistrationRepositoryProvider.getIfAvailable() != null) {
+        if (clientRegistrationRepositoryProvider.getIfAvailable() != null && hasRealOAuthClientConfig()) {
             http.oauth2Login(oauth2 -> oauth2
                     .authorizationEndpoint(auth -> auth
                             .authorizationRequestRepository(cookieAuthorizationRequestRepository))
@@ -85,6 +92,17 @@ public class SecurityConfig {
         }
 
         return http.build();
+    }
+
+    private boolean hasRealOAuthClientConfig() {
+        return isRealClientId(googleClientId) || isRealClientId(githubClientId);
+    }
+
+    private boolean isRealClientId(String clientId) {
+        if (clientId == null || clientId.isBlank()) {
+            return false;
+        }
+        return !clientId.startsWith("render-");
     }
 
     @Bean
