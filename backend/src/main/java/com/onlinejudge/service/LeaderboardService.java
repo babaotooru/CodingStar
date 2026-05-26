@@ -17,7 +17,13 @@ public class LeaderboardService {
 
     // @Cacheable(value = "leaderboard")
     public List<LeaderboardEntry> getLeaderboard() {
-        List<User> users = userRepository.findTopUsers();
+        List<User> users;
+        try {
+            users = userRepository.findTopUsers();
+        } catch (RuntimeException ex) {
+            return new ArrayList<>();
+        }
+
         List<LeaderboardEntry> leaderboard = new ArrayList<>();
 
         int rank = 1;
