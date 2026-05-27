@@ -2,10 +2,12 @@ package com.onlinejudge.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!prod")
 @RequiredArgsConstructor
 public class UserDataMigration {
 
