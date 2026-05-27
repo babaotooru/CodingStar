@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,78 +28,44 @@ public class ProblemService {
 
     private final ProblemRepository problemRepository;
     private final TestCaseRepository testCaseRepository;
-    private final RealtimeProblemFallbackService realtimeProblemFallbackService;
 
     @Cacheable(value = "problems", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     public Page<ProblemResponse> getAllProblems(Pageable pageable) {
-        try {
-            return problemRepository.findAll(pageable).map(this::toResponse);
-        } catch (RuntimeException ex) {
-            return realtimeProblemFallbackService.getAll(pageable);
-        }
+        return problemRepository.findAll(pageable).map(this::toResponse);
     }
 
     @Cacheable(value = "problem", key = "#id")
     public ProblemResponse getProblemById(Long id) {
-        try {
-            Problem problem = problemRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + id));
-            return toResponse(problem);
-        } catch (RuntimeException ex) {
-            return realtimeProblemFallbackService.getById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + id));
-        }
+        Problem problem = problemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + id));
+        return toResponse(problem);
     }
 
     public Page<ProblemResponse> getProblemsByDifficulty(Problem.Difficulty difficulty, Pageable pageable) {
-        try {
-            return problemRepository.findByDifficulty(difficulty, pageable).map(this::toResponse);
-        } catch (RuntimeException ex) {
-            return realtimeProblemFallbackService.getByDifficulty(difficulty, pageable);
-        }
+        return problemRepository.findByDifficulty(difficulty, pageable).map(this::toResponse);
     }
 
     public Page<ProblemResponse> searchProblems(String query, Pageable pageable) {
-        try {
-            return problemRepository.findByTitleContainingIgnoreCase(query, pageable).map(this::toResponse);
-        } catch (RuntimeException ex) {
-            return realtimeProblemFallbackService.search(query, pageable);
-        }
+        return problemRepository.findByTitleContainingIgnoreCase(query, pageable).map(this::toResponse);
     }
 
     public Page<ProblemResponse> getProblemsByCategoryPrefix(String prefix, Pageable pageable) {
-        try {
-            return problemRepository.findByCategoryStartingWith(prefix, pageable).map(this::toResponse);
-        } catch (RuntimeException ex) {
-            return realtimeProblemFallbackService.getByCategoryPrefix(prefix, pageable);
-        }
+        return problemRepository.findByCategoryStartingWith(prefix, pageable).map(this::toResponse);
     }
 
     public Page<ProblemResponse> getProblemsByCategoryPrefixAndDifficulty(String prefix, Problem.Difficulty difficulty,
             Pageable pageable) {
-        try {
-            return problemRepository.findByCategoryStartingWithAndDifficulty(prefix, difficulty, pageable)
-                    .map(this::toResponse);
-        } catch (RuntimeException ex) {
-            return realtimeProblemFallbackService.getByCategoryPrefixAndDifficulty(prefix, difficulty, pageable);
-        }
+        return problemRepository.findByCategoryStartingWithAndDifficulty(prefix, difficulty, pageable)
+                .map(this::toResponse);
     }
 
     public Long getRandomProblemId() {
-        try {
-            long count = problemRepository.count();
-            if (count == 0)
-                throw new ResourceNotFoundException("No problems available");
-            long randomIndex = (long) (Math.random() * count);
-            return problemRepository.findAll(
-                    org.springframework.data.domain.PageRequest.of((int) randomIndex, 1)).getContent().get(0).getId();
-        } catch (RuntimeException ex) {
-            Page<ProblemResponse> fallbackPage = realtimeProblemFallbackService.getAll(PageRequest.of(0, 1));
-            if (fallbackPage.getContent().isEmpty()) {
-                throw new ResourceNotFoundException("No problems available");
-            }
-            return fallbackPage.getContent().get(0).getId();
-        }
+        long count = problemRepository.count();
+        if (count == 0)
+            throw new ResourceNotFoundException("No problems available");
+        long randomIndex = (long) (Math.random() * count);
+        return problemRepository.findAll(
+                org.springframework.data.domain.PageRequest.of((int) randomIndex, 1)).getContent().get(0).getId();
     }
 
     @Transactional
@@ -173,18 +138,14 @@ public class ProblemService {
     }
 
     public List<Map<String, Object>> getCategoriesWithCount() {
-        try {
-            return problemRepository.findCategoriesWithCount().stream()
-                    .map(row -> {
-                        Map<String, Object> map = new LinkedHashMap<>();
-                        map.put("category", row[0]);
-                        map.put("count", ((Number) row[1]).longValue());
-                        return map;
-                    })
-                    .collect(Collectors.toList());
-        } catch (RuntimeException ex) {
-            return realtimeProblemFallbackService.getCategoriesWithCount();
-        }
+        return problemRepository.findCategoriesWithCount().stream()
+                .map(row -> {
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    map.put("category", row[0]);
+                    map.put("count", ((Number) row[1]).longValue());
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 
     private ProblemResponse toResponse(Problem problem) {

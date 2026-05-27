@@ -10,12 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,25 +25,18 @@ import java.util.Map;
 @Slf4j
 public class ProblemDatasetSeeder implements ApplicationRunner {
 
-    private static final String DATASET_RESOURCE = "realtime_dataset.json";
+    private static final String DATASET_RESOURCE = "data/problems_5000.json";
     private static final int BATCH_SIZE = 100;
 
     private final ProblemRepository problemRepository;
     private final TestCaseRepository testCaseRepository;
     private final ObjectMapper objectMapper;
-    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        long problemCount = problemRepository.count();
-        if (problemCount > 0 && !looksLikePlaceholderDataset()) {
-            log.info("Skipping problem seed: database already contains {} real problems", problemCount);
+        if (problemRepository.count() > 0) {
+            log.info("Skipping problem seed: database already contains {} problems", problemRepository.count());
             return;
-        }
-
-        if (problemCount > 0) {
-            log.info("Existing problem rows look like placeholder data; truncating and reseeding from {}", DATASET_RESOURCE);
-            truncateProblemData();
         }
 
         ClassPathResource resource = new ClassPathResource(DATASET_RESOURCE);
@@ -84,23 +74,6 @@ public class ProblemDatasetSeeder implements ApplicationRunner {
 
             log.info("Seeded {} problems from dataset", seededCount);
         }
-    }
-
-    private boolean looksLikePlaceholderDataset() {
-        return problemRepository.findAll(PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "id")))
-                .stream()
-                .findFirst()
-                .map(problem -> {
-                    String title = problem.getTitle();
-                    String description = problem.getDescription();
-                    return (title != null && title.startsWith("Programming Basics Problem"))
-                            || (description != null && description.contains("Placeholder statement"));
-                })
-                .orElse(false);
-    }
-
-    private void truncateProblemData() {
-        jdbcTemplate.execute("TRUNCATE TABLE test_cases, submissions, problem_notes, contest_problems, contest_participants, problems RESTART IDENTITY CASCADE");
     }
 
     protected int saveBatch(List<Problem> batch) {
