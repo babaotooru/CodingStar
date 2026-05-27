@@ -1,5 +1,4 @@
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\config\DatabaseMigration.java
-E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\config\ForceProdDatabaseOverride.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\config\ProblemDatasetSeeder.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\config\UserDataMigration.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\controller\AuthController.java
@@ -53,5 +52,4 @@ E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\serv
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\service\LeaderboardService.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\service\ProblemNoteService.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\service\ProblemService.java
-E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\service\RealtimeProblemFallbackService.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\service\SubmissionService.java

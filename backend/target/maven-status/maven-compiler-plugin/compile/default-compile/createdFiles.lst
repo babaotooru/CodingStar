@@ -50,7 +50,6 @@ com\onlinejudge\dto\TestCaseRequest.class
 com\onlinejudge\service\AuthService.class
 com\onlinejudge\config\ProblemDatasetSeeder.class
 com\onlinejudge\dto\ContestResponse$ContestResponseBuilder.class
-com\onlinejudge\config\ForceProdDatabaseOverride.class
 com\onlinejudge\controller\ProblemNoteController.class
 com\onlinejudge\service\CodeExecutionService$ExecutionResult$ExecutionResultBuilder.class
 com\onlinejudge\controller\LeaderboardController.class
