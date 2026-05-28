@@ -5,6 +5,7 @@ import DifficultyBadge from '../components/DifficultyBadge';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 function Problems() {
+  const PAGE_SIZE = 10000;
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
@@ -27,11 +28,11 @@ function Problems() {
     try {
       let response;
       if (searchQuery) {
-        response = await problemsAPI.search(searchQuery, page, 50);
+        response = await problemsAPI.search(searchQuery, page, PAGE_SIZE);
       } else if (difficulty !== 'ALL') {
-        response = await problemsAPI.getByDifficulty(difficulty, page, 50);
+        response = await problemsAPI.getByDifficulty(difficulty, page, PAGE_SIZE);
       } else {
-        response = await problemsAPI.getAll(page, 50);
+        response = await problemsAPI.getAll(page, PAGE_SIZE);
       }
       setProblems(asArray(response.data?.content));
       setTotalPages(response.data?.totalPages || 0);
@@ -83,6 +84,8 @@ function Problems() {
   ];
 
   if (loading && problems.length === 0) return <LoadingSpinner text="Loading problems..." />;
+
+  const showPagination = false;
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -154,7 +157,7 @@ function Problems() {
             <div className="flex items-center justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-dark-500 text-xs font-mono">{page * 50 + idx + 1}.</span>
+                  <span className="text-dark-500 text-xs font-mono">{page * PAGE_SIZE + idx + 1}.</span>
                   <h3 className="text-white font-medium text-sm truncate">{problem.title}</h3>
                 </div>
                 <div className="flex items-center gap-3 mt-2">
@@ -189,7 +192,7 @@ function Problems() {
                 className={`group hover:bg-dark-800/40 transition-colors ${idx % 2 === 0 ? 'bg-dark-900/30' : 'bg-dark-900/10'}`}
               >
                 <td className="pl-5 pr-2 py-3.5">
-                  <span className="text-dark-600 text-xs font-mono">{page * 50 + idx + 1}</span>
+                  <span className="text-dark-600 text-xs font-mono">{page * PAGE_SIZE + idx + 1}</span>
                 </td>
                 <td className="px-4 py-3.5">
                   <Link
@@ -239,10 +242,10 @@ function Problems() {
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
+      {showPagination && totalPages > 1 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6 px-1">
           <span className="text-dark-500 text-sm">
-            Showing {page * 50 + 1}-{Math.min((page + 1) * 50, totalElements)} of {formatCount(totalElements)}
+            Showing {page * PAGE_SIZE + 1}-{Math.min((page + 1) * PAGE_SIZE, totalElements)} of {formatCount(totalElements)}
           </span>
           <div className="flex items-center gap-1.5">
             <button
