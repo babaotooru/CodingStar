@@ -329,7 +329,7 @@ public class ProblemService {
     }
 
     private ProblemResponse buildFallbackProblem(JsonNode problemNode, Map<Integer, String> topicNames) {
-        Long id = problemNode.path("id").isMissingNode() ? null : problemNode.path("id").asLong();
+        Long id = parseProblemId(problemNode.get("id"));
         String title = text(problemNode, "title", "Untitled Problem");
         String difficultyText = text(problemNode, "difficulty", "EASY").toUpperCase();
         Problem.Difficulty difficulty = parseDifficulty(difficultyText);
@@ -397,6 +397,28 @@ public class ProblemService {
         }
 
         return "General";
+    }
+
+    private Long parseProblemId(JsonNode idNode) {
+        if (idNode == null || idNode.isNull()) {
+            return null;
+        }
+        if (idNode.isNumber()) {
+            return idNode.asLong();
+        }
+        String raw = idNode.asText(null);
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        String digits = raw.replaceAll("\\D+", "");
+        if (!digits.isBlank()) {
+            try {
+                return Long.parseLong(digits);
+            } catch (NumberFormatException ignored) {
+                // Fall through to hashed ID fallback.
+            }
+        }
+        return (long) Math.abs(raw.hashCode());
     }
 
     private String firstTestcaseValue(JsonNode problemNode, String field) {
