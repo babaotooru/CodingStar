@@ -158,7 +158,10 @@ function Problems() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="text-dark-500 text-xs font-mono">{page * PAGE_SIZE + idx + 1}.</span>
-                  <h3 className="text-white font-medium text-sm truncate">{problem.title}</h3>
+                  <div className="min-w-0">
+                    <h3 className="text-white font-medium text-sm truncate">{problem.title}</h3>
+                    {problem.problemCode && <div className="text-primary-400 text-[11px] font-mono mt-0.5">{problem.problemCode}</div>}
+                  </div>
                 </div>
                 <div className="flex items-center gap-3 mt-2">
                   <DifficultyBadge difficulty={problem.difficulty} />
@@ -201,6 +204,7 @@ function Problems() {
                   >
                     {problem.title}
                   </Link>
+                  {problem.problemCode && <div className="text-primary-400 text-[11px] font-mono mt-0.5">{problem.problemCode}</div>}
                 </td>
                 <td className="px-4 py-3.5">
                   <span className={`text-sm font-medium ${difficultyColor(problem.difficulty)}`}>

@@ -208,14 +208,30 @@ public class ProblemService {
     }
 
     public List<Map<String, Object>> getCategoriesWithCount() {
-        return problemRepository.findCategoriesWithCount().stream()
-                .map(row -> {
-                    Map<String, Object> map = new LinkedHashMap<>();
-                    map.put("category", row[0]);
-                    map.put("count", ((Number) row[1]).longValue());
-                    return map;
-                })
-                .collect(Collectors.toList());
+        try {
+            return problemRepository.findCategoriesWithCount().stream()
+                    .map(row -> {
+                        Map<String, Object> map = new LinkedHashMap<>();
+                        map.put("category", row[0]);
+                        map.put("count", ((Number) row[1]).longValue());
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+        } catch (RuntimeException ex) {
+            Map<String, Long> counts = new LinkedHashMap<>();
+            for (ProblemResponse problem : loadFallbackProblems()) {
+                String category = problem.getCategory() != null ? problem.getCategory() : "General";
+                counts.put(category, counts.getOrDefault(category, 0L) + 1L);
+            }
+            return counts.entrySet().stream()
+                    .map(entry -> {
+                        Map<String, Object> map = new LinkedHashMap<>();
+                        map.put("category", entry.getKey());
+                        map.put("count", entry.getValue());
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+        }
     }
 
     private ProblemResponse toResponse(Problem problem) {
@@ -329,31 +345,42 @@ public class ProblemService {
     }
 
     private ProblemResponse buildFallbackProblem(JsonNode problemNode, Map<Integer, String> topicNames) {
+        String problemCode = text(problemNode, "id", null);
         Long id = parseProblemId(problemNode.get("id"));
         String title = text(problemNode, "title", "Untitled Problem");
         String difficultyText = text(problemNode, "difficulty", "EASY").toUpperCase();
         Problem.Difficulty difficulty = parseDifficulty(difficultyText);
+        String level = text(problemNode, "level", null);
+        String platform = text(problemNode, "platform", null);
         String description = text(problemNode, "statement", text(problemNode, "description", ""));
         String category = resolveCategory(problemNode, topicNames);
         String sampleInput = firstTestcaseValue(problemNode, "input");
         String sampleOutput = firstTestcaseValue(problemNode, "output");
+        String sampleExplanation = text(problemNode, "sample_explanation", null);
         int timeLimitMs = problemNode.path("time_limit_ms").asInt(2000);
         int memoryLimitMb = problemNode.path("memory_limit_mb").asInt(256);
         int totalSubmissions = problemNode.path("submissions").asInt(0);
         double acceptanceRate = problemNode.path("acceptance_rate").isNull()
                 ? 0.0
                 : problemNode.path("acceptance_rate").asDouble(0.0);
+        String kind = text(problemNode, "kind", null);
+        String family = text(problemNode, "family", null);
+        String updatedAt = text(problemNode, "updated_at", null);
 
         return ProblemResponse.builder()
                 .id(id)
+                .problemCode(problemCode)
                 .title(title)
                 .description(description)
                 .difficulty(difficulty)
+                .level(level)
+                .platform(platform)
                 .inputFormat(text(problemNode, "input_format", null))
                 .outputFormat(text(problemNode, "output_format", null))
                 .constraints(text(problemNode, "constraints", null))
                 .sampleInput(sampleInput)
                 .sampleOutput(sampleOutput)
+                .sampleExplanation(sampleExplanation)
                 .category(category)
                 .topics(category)
                 .companies(null)
@@ -363,12 +390,16 @@ public class ProblemService {
                 .syntaxNotes(null)
                 .hints(null)
                 .editorial(text(problemNode, "canonical_answer", null))
+                .kind(kind)
+                .family(family)
                 .timeLimitMs(timeLimitMs)
                 .memoryLimitMb(memoryLimitMb)
                 .totalSubmissions(totalSubmissions)
                 .acceptedSubmissions((int) Math.round((acceptanceRate / 100.0) * totalSubmissions))
                 .createdAt(null)
+                .updatedAt(updatedAt)
                 .acceptanceRate(Math.round(acceptanceRate * 100.0) / 100.0)
+                .testcases(buildFallbackTestcases(problemNode))
                 .build();
     }
 
@@ -427,6 +458,25 @@ public class ProblemService {
             return text(testcasesNode.get(0), field, null);
         }
         return null;
+    }
+
+    private List<ProblemResponse.TestCaseView> buildFallbackTestcases(JsonNode problemNode) {
+        JsonNode testcasesNode = problemNode.path("testcases");
+        if (!testcasesNode.isArray() || testcasesNode.isEmpty()) {
+            return List.of();
+        }
+
+        List<ProblemResponse.TestCaseView> testcases = new ArrayList<>(testcasesNode.size());
+        for (JsonNode testcaseNode : testcasesNode) {
+            testcases.add(ProblemResponse.TestCaseView.builder()
+                    .id(text(testcaseNode, "id", null))
+                    .input(text(testcaseNode, "input", null))
+                    .output(text(testcaseNode, "output", null))
+                    .isSample(testcaseNode.path("is_sample").asBoolean(false))
+                    .explanation(text(testcaseNode, "explanation", null))
+                    .build());
+        }
+        return testcases;
     }
 
     private String text(JsonNode node, String field, String defaultValue) {

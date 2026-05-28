@@ -26,7 +26,7 @@ public class LeaderboardController {
         } catch (Exception e) {
             System.err.println("ERROR fetching leaderboard: " + e.getMessage());
             e.printStackTrace();
-            throw e;
+            return ResponseEntity.ok(List.of());
         }
     }
 }

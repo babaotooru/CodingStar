@@ -21,45 +21,49 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
-    private final SubmissionRepository submissionRepository;
+        private final UserRepository userRepository;
+        private final SubmissionRepository submissionRepository;
 
-    @GetMapping("/count")
-    public ResponseEntity<java.util.Map<String, Long>> getUserCount() {
-        long count = userRepository.count();
-        return ResponseEntity.ok(java.util.Map.of("total", count));
-    }
+        @GetMapping("/count")
+        public ResponseEntity<java.util.Map<String, Long>> getUserCount() {
+                try {
+                        long count = userRepository.count();
+                        return ResponseEntity.ok(java.util.Map.of("total", count));
+                } catch (Exception e) {
+                        return ResponseEntity.ok(java.util.Map.of("total", 0L));
+                }
+        }
 
-    @GetMapping("/profile")
-    public ResponseEntity<UserProfileResponse> getProfile(
-            @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        @GetMapping("/profile")
+        public ResponseEntity<UserProfileResponse> getProfile(
+                        @AuthenticationPrincipal UserDetails userDetails) {
+                User user = userRepository.findByUsername(userDetails.getUsername())
+                                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        List<Problem> solvedProblems = submissionRepository.findSolvedProblemsByUserId(user.getId());
+                List<Problem> solvedProblems = submissionRepository.findSolvedProblemsByUserId(user.getId());
 
-        List<UserProfileResponse.SolvedProblem> solvedList = solvedProblems.stream()
-                .map(p -> UserProfileResponse.SolvedProblem.builder()
-                        .id(p.getId())
-                        .title(p.getTitle())
-                        .difficulty(p.getDifficulty().name())
-                        .build())
-                .toList();
+                List<UserProfileResponse.SolvedProblem> solvedList = solvedProblems.stream()
+                                .map(p -> UserProfileResponse.SolvedProblem.builder()
+                                                .id(p.getId())
+                                                .title(p.getTitle())
+                                                .difficulty(p.getDifficulty().name())
+                                                .build())
+                                .toList();
 
-        int rank = userRepository.calculateRank(user.getStars(), user.getScore());
+                int rank = userRepository.calculateRank(user.getStars(), user.getScore());
 
-        UserProfileResponse profile = UserProfileResponse.builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .totalSolved(user.getTotalSolved())
-                .totalSubmissions(user.getTotalSubmissions())
-                .score(user.getScore())
-                .stars(user.getStars())
-                .rank(rank)
-                .createdAt(user.getCreatedAt())
-                .solvedProblems(solvedList)
-                .build();
+                UserProfileResponse profile = UserProfileResponse.builder()
+                                .username(user.getUsername())
+                                .email(user.getEmail())
+                                .totalSolved(user.getTotalSolved())
+                                .totalSubmissions(user.getTotalSubmissions())
+                                .score(user.getScore())
+                                .stars(user.getStars())
+                                .rank(rank)
+                                .createdAt(user.getCreatedAt())
+                                .solvedProblems(solvedList)
+                                .build();
 
-        return ResponseEntity.ok(profile);
-    }
+                return ResponseEntity.ok(profile);
+        }
 }

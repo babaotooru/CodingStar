@@ -32,15 +32,23 @@ public class ContestService {
     private final SubmissionRepository submissionRepository;
 
     public List<ContestResponse> getAllContests() {
-        return contestRepository.findAllByOrderByStartTimeDesc().stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+        try {
+            return contestRepository.findAllByOrderByStartTimeDesc().stream()
+                    .map(this::toResponse)
+                    .collect(Collectors.toList());
+        } catch (RuntimeException ex) {
+            return List.of();
+        }
     }
 
     public List<ContestResponse> getActiveAndUpcomingContests() {
-        return contestRepository.findByStatusInOrderByStartTimeAsc(
-                List.of(Contest.ContestStatus.UPCOMING, Contest.ContestStatus.ACTIVE))
-                .stream().map(this::toResponse).collect(Collectors.toList());
+        try {
+            return contestRepository.findByStatusInOrderByStartTimeAsc(
+                    List.of(Contest.ContestStatus.UPCOMING, Contest.ContestStatus.ACTIVE))
+                    .stream().map(this::toResponse).collect(Collectors.toList());
+        } catch (RuntimeException ex) {
+            return List.of();
+        }
     }
 
     public ContestResponse getContestById(Long id) {
