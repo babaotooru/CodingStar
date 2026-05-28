@@ -26,9 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.dao.DataAccessException;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +44,7 @@ public class ProblemService {
     public Page<ProblemResponse> getAllProblems(Pageable pageable) {
         try {
             return problemRepository.findAll(pageable).map(this::toResponse);
-        } catch (DataAccessException | RuntimeException ex) {
+        } catch (RuntimeException ex) {
             return fallbackPage(pageable);
         }
     }
@@ -66,7 +64,7 @@ public class ProblemService {
             Problem problem = problemRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + id));
             return toResponse(problem);
-        } catch (DataAccessException | RuntimeException ex) {
+        } catch (RuntimeException ex) {
             return loadFallbackProblems().stream()
                     .filter(problem -> problem.getId() != null && problem.getId().equals(id))
                     .findFirst()
@@ -77,7 +75,7 @@ public class ProblemService {
     public Page<ProblemResponse> getProblemsByDifficulty(Problem.Difficulty difficulty, Pageable pageable) {
         try {
             return problemRepository.findByDifficulty(difficulty, pageable).map(this::toResponse);
-        } catch (DataAccessException | RuntimeException ex) {
+        } catch (RuntimeException ex) {
             return pageFromList(loadFallbackProblems().stream()
                     .filter(problem -> problem.getDifficulty() == difficulty)
                     .collect(Collectors.toList()), pageable);
@@ -87,7 +85,7 @@ public class ProblemService {
     public Page<ProblemResponse> searchProblems(String query, Pageable pageable) {
         try {
             return problemRepository.findByTitleContainingIgnoreCase(query, pageable).map(this::toResponse);
-        } catch (DataAccessException | RuntimeException ex) {
+        } catch (RuntimeException ex) {
             String needle = query == null ? "" : query.toLowerCase();
             return pageFromList(loadFallbackProblems().stream()
                     .filter(problem -> problem.getTitle() != null && problem.getTitle().toLowerCase().contains(needle))
@@ -98,7 +96,7 @@ public class ProblemService {
     public Page<ProblemResponse> getProblemsByCategoryPrefix(String prefix, Pageable pageable) {
         try {
             return problemRepository.findByCategoryStartingWith(prefix, pageable).map(this::toResponse);
-        } catch (DataAccessException | RuntimeException ex) {
+        } catch (RuntimeException ex) {
             String needle = prefix == null ? "" : prefix.toLowerCase();
             return pageFromList(loadFallbackProblems().stream()
                     .filter(problem -> problem.getCategory() != null
@@ -112,7 +110,7 @@ public class ProblemService {
         try {
             return problemRepository.findByCategoryStartingWithAndDifficulty(prefix, difficulty, pageable)
                     .map(this::toResponse);
-        } catch (DataAccessException | RuntimeException ex) {
+        } catch (RuntimeException ex) {
             String needle = prefix == null ? "" : prefix.toLowerCase();
             return pageFromList(loadFallbackProblems().stream()
                     .filter(problem -> problem.getCategory() != null
@@ -130,7 +128,7 @@ public class ProblemService {
             long randomIndex = (long) (Math.random() * count);
             return problemRepository.findAll(
                     org.springframework.data.domain.PageRequest.of((int) randomIndex, 1)).getContent().get(0).getId();
-        } catch (DataAccessException | RuntimeException ex) {
+        } catch (RuntimeException ex) {
             List<ProblemResponse> problems = loadFallbackProblems();
             if (problems.isEmpty()) {
                 throw new ResourceNotFoundException("No problems available");
