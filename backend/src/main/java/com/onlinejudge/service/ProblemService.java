@@ -278,7 +278,7 @@ public class ProblemService {
 
                 try (InputStream inputStream = resource.getInputStream()) {
                     JsonNode root = objectMapper.readTree(inputStream);
-                    JsonNode problemsNode = root.path("problems");
+                    JsonNode problemsNode = resolveProblemsNode(root);
                     if (!problemsNode.isArray() || problemsNode.isEmpty()) {
                         throw new IllegalStateException("Fallback dataset has no problems");
                     }
@@ -296,6 +296,24 @@ public class ProblemService {
                 throw new RuntimeException("Failed to load fallback problems from dataset", e);
             }
         }
+    }
+
+    private JsonNode resolveProblemsNode(JsonNode root) {
+        if (root == null || root.isNull()) {
+            return null;
+        }
+        if (root.isArray()) {
+            return root;
+        }
+        JsonNode problemsNode = root.path("problems");
+        if (problemsNode.isArray()) {
+            return problemsNode;
+        }
+        JsonNode dataNode = root.path("data");
+        if (dataNode.isArray()) {
+            return dataNode;
+        }
+        return problemsNode;
     }
 
     private Map<Integer, String> loadTopicNames(JsonNode topicsNode) {
