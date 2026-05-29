@@ -270,7 +270,7 @@ public class ProblemService {
                 .acceptanceRate(Math.round(acceptanceRate * 100.0) / 100.0)
                 .build();
 
-        return mergeWithFallback(response, problem.getTitle(), problem.getDifficulty());
+        return mergeWithFallback(response, problem.getId(), problem.getTitle(), problem.getDifficulty());
     }
 
     private Page<ProblemResponse> pageFromList(List<ProblemResponse> items, Pageable pageable) {
@@ -485,8 +485,9 @@ public class ProblemService {
         return testcases;
     }
 
-    private ProblemResponse mergeWithFallback(ProblemResponse response, String title, Problem.Difficulty difficulty) {
-        ProblemResponse fallback = findFallbackProblem(title, difficulty);
+    private ProblemResponse mergeWithFallback(ProblemResponse response, Long problemId, String title,
+            Problem.Difficulty difficulty) {
+        ProblemResponse fallback = findFallbackProblem(problemId, title, difficulty);
         if (fallback == null) {
             return response;
         }
@@ -535,7 +536,17 @@ public class ProblemService {
         return response;
     }
 
-    private ProblemResponse findFallbackProblem(String title, Problem.Difficulty difficulty) {
+    private ProblemResponse findFallbackProblem(Long problemId, String title, Problem.Difficulty difficulty) {
+        if (problemId != null) {
+            String expectedCode = String.format("P%05d", problemId);
+            for (ProblemResponse candidate : loadFallbackProblems()) {
+                if (expectedCode.equalsIgnoreCase(candidate.getProblemCode())
+                        || expectedCode.equalsIgnoreCase(candidate.getTitle())) {
+                    return candidate;
+                }
+            }
+        }
+
         if (isBlank(title)) {
             return null;
         }

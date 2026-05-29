@@ -17,22 +17,24 @@ function NotesEditor({ problemId, onNoteSaved }) {
   useEffect(() => {
     const fetchNote = async () => {
       try {
-        const response = await problemNotesAPI.get(problemId);
-        if (response.data) {
-          setNote({
-            approach: response.data.approach || '',
-            logic: response.data.logic || '',
-            learnings: response.data.learnings || '',
-            timeComplexity: response.data.timeComplexity || '',
-            spaceComplexity: response.data.spaceComplexity || '',
-          });
-          setHasExistingNote(true);
+        const hasNoteResponse = await problemNotesAPI.hasNote(problemId);
+        const noteExists = Boolean(hasNoteResponse.data?.hasNote ?? hasNoteResponse.data);
+
+        if (noteExists) {
+          const response = await problemNotesAPI.get(problemId);
+          if (response.data) {
+            setNote({
+              approach: response.data.approach || '',
+              logic: response.data.logic || '',
+              learnings: response.data.learnings || '',
+              timeComplexity: response.data.timeComplexity || '',
+              spaceComplexity: response.data.spaceComplexity || '',
+            });
+            setHasExistingNote(true);
+          }
         }
       } catch (err) {
-        // Note doesn't exist yet, start with empty form
-        if (err.response?.status !== 404) {
-          toast.error('Failed to load note');
-        }
+        toast.error('Failed to load note');
       } finally {
         setLoading(false);
       }
