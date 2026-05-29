@@ -26,6 +26,12 @@ function ProblemDetails() {
   if (loading) return <LoadingSpinner text="Loading problem..." />;
   if (!problem) return <div className="text-center text-dark-400 py-12">Problem not found</div>;
 
+  const sampleTestcase = Array.isArray(problem.testcases)
+    ? problem.testcases.find((testcase) => testcase?.isSample)
+    : null;
+  const sampleInput = problem.sampleInput || problem.sample_input || sampleTestcase?.input || '';
+  const sampleOutput = problem.sampleOutput || problem.sample_output || sampleTestcase?.output || '';
+  const sampleExplanation = problem.sampleExplanation || problem.sample_explanation || sampleTestcase?.explanation || '';
   const problemCode = problem.problemCode || (problem.id != null ? `P${String(problem.id).padStart(5, '0')}` : '');
 
   return (
@@ -97,10 +103,10 @@ function ProblemDetails() {
               <div className="text-white">{new Date(problem.updatedAt).toLocaleString()}</div>
             </div>
           )}
-          {problem.sampleExplanation && (
+          {sampleExplanation && (
             <div className="bg-dark-800/70 border border-dark-700 rounded-lg p-3 sm:col-span-2 lg:col-span-3">
               <div className="text-dark-500 text-xs uppercase tracking-wide mb-1">Sample Explanation</div>
-              <div className="text-dark-300 whitespace-pre-wrap">{problem.sampleExplanation}</div>
+              <div className="text-dark-300 whitespace-pre-wrap">{sampleExplanation}</div>
             </div>
           )}
         </div>
@@ -133,33 +139,33 @@ function ProblemDetails() {
             </div>
           )}
 
-          {problem.sampleInput && (
+          {sampleInput && (
             <div className="border border-blue-500/30 rounded-lg overflow-hidden">
               <div className="flex items-center justify-between bg-blue-900/30 px-4 py-2.5">
                 <h2 className="text-lg font-semibold text-blue-300 flex items-center gap-2">
                   <span>📥</span> Sample Input
                 </h2>
                 <button
-                  onClick={() => navigator.clipboard.writeText(problem.sampleInput)}
+                  onClick={() => navigator.clipboard.writeText(sampleInput)}
                   className="text-blue-400 hover:text-blue-200 text-xs flex items-center gap-1 transition-colors"
                 >📋 Copy</button>
               </div>
-              <pre className="bg-dark-800 p-4 text-green-300 font-mono text-sm overflow-x-auto whitespace-pre-wrap">{problem.sampleInput}</pre>
+              <pre className="bg-dark-800 p-4 text-green-300 font-mono text-sm overflow-x-auto whitespace-pre-wrap">{sampleInput}</pre>
             </div>
           )}
 
-          {problem.sampleOutput && (
+          {sampleOutput && (
             <div className="border border-emerald-500/30 rounded-lg overflow-hidden">
               <div className="flex items-center justify-between bg-emerald-900/30 px-4 py-2.5">
                 <h2 className="text-lg font-semibold text-emerald-300 flex items-center gap-2">
                   <span>📤</span> Sample Output
                 </h2>
                 <button
-                  onClick={() => navigator.clipboard.writeText(problem.sampleOutput)}
+                  onClick={() => navigator.clipboard.writeText(sampleOutput)}
                   className="text-emerald-400 hover:text-emerald-200 text-xs flex items-center gap-1 transition-colors"
                 >📋 Copy</button>
               </div>
-              <pre className="bg-dark-800 p-4 text-yellow-300 font-mono text-sm overflow-x-auto whitespace-pre-wrap">{problem.sampleOutput}</pre>
+              <pre className="bg-dark-800 p-4 text-yellow-300 font-mono text-sm overflow-x-auto whitespace-pre-wrap">{sampleOutput}</pre>
             </div>
           )}
 

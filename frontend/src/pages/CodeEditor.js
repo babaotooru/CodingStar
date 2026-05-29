@@ -365,6 +365,13 @@ Rules:
   if (loading) return <LoadingSpinner text="Loading editor..." />;
   if (!problem) return <div className="text-center text-dark-400 py-12">Problem not found</div>;
 
+  const sampleTestcase = Array.isArray(problem.testcases)
+    ? problem.testcases.find((testcase) => testcase?.isSample)
+    : null;
+  const sampleInput = problem.sampleInput || problem.sample_input || sampleTestcase?.input || '';
+  const sampleOutput = problem.sampleOutput || problem.sample_output || sampleTestcase?.output || '';
+  const sampleExplanation = problem.sampleExplanation || problem.sample_explanation || sampleTestcase?.explanation || '';
+
   return (
     <div className="flex flex-col h-[calc(100vh-5rem)]">
       {/* LeetCode-style Navigation Bar */}
@@ -680,35 +687,42 @@ Rules:
                   </div>
                 )}
 
-                {problem.sampleInput && (
+                {sampleInput && (
                   <div className="border border-blue-500/30 rounded-lg overflow-hidden">
                     <div className="flex items-center justify-between bg-blue-900/30 px-3 py-2">
                       <h3 className="font-semibold text-blue-300 text-sm flex items-center gap-2">
                         <span>📥</span> Sample Input
                       </h3>
                       <button
-                        onClick={() => navigator.clipboard.writeText(problem.sampleInput)}
+                        onClick={() => navigator.clipboard.writeText(sampleInput)}
                         className="text-blue-400 hover:text-blue-200 text-xs flex items-center gap-1 transition-colors"
                         title="Copy"
                       >📋 Copy</button>
                     </div>
-                    <pre className="bg-dark-800 p-3 text-green-300 font-mono text-sm whitespace-pre-wrap">{problem.sampleInput}</pre>
+                    <pre className="bg-dark-800 p-3 text-green-300 font-mono text-sm whitespace-pre-wrap">{sampleInput}</pre>
                   </div>
                 )}
 
-                {problem.sampleOutput && (
+                {sampleOutput && (
                   <div className="border border-emerald-500/30 rounded-lg overflow-hidden">
                     <div className="flex items-center justify-between bg-emerald-900/30 px-3 py-2">
                       <h3 className="font-semibold text-emerald-300 text-sm flex items-center gap-2">
                         <span>📤</span> Sample Output
                       </h3>
                       <button
-                        onClick={() => navigator.clipboard.writeText(problem.sampleOutput)}
+                        onClick={() => navigator.clipboard.writeText(sampleOutput)}
                         className="text-emerald-400 hover:text-emerald-200 text-xs flex items-center gap-1 transition-colors"
                         title="Copy"
                       >📋 Copy</button>
                     </div>
-                    <pre className="bg-dark-800 p-3 text-yellow-300 font-mono text-sm whitespace-pre-wrap">{problem.sampleOutput}</pre>
+                    <pre className="bg-dark-800 p-3 text-yellow-300 font-mono text-sm whitespace-pre-wrap">{sampleOutput}</pre>
+                  </div>
+                )}
+
+                {sampleExplanation && (
+                  <div className="bg-dark-800/60 border border-dark-700 rounded-lg p-3">
+                    <div className="text-dark-500 text-xs uppercase tracking-wide mb-1">Sample Explanation</div>
+                    <div className="text-dark-300 whitespace-pre-wrap text-sm">{sampleExplanation}</div>
                   </div>
                 )}
               </div>
