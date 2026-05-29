@@ -17,13 +17,18 @@ function OAuthCallback() {
     const username = searchParams.get('username');
     const email = searchParams.get('email');
     const role = searchParams.get('role');
+    const degraded = searchParams.get('degraded') === 'true';
 
     if (token && username) {
       const userData = { token, username, email, role };
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(userData));
       setOAuthUser(userData);
-      toast.success(`Welcome, ${username}!`);
+      toast[degraded ? 'warning' : 'success'](
+        degraded
+          ? `Signed in as ${username}, but the backend could not persist the user record.`
+          : `Welcome, ${username}!`
+      );
       setTimeout(() => navigate('/problems', { replace: true }), 100);
     } else {
       toast.error('OAuth login failed');

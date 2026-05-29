@@ -46,7 +46,8 @@ function Register() {
   };
 
   const handleOAuthLogin = (provider) => {
-    window.location.href = `${OAUTH_BASE}/oauth2/authorization/${provider}`;
+    const frontend = encodeURIComponent(window.location.origin);
+    window.location.href = `${OAUTH_BASE}/oauth2/authorization/${provider}?frontend=${frontend}`;
   };
 
   return (

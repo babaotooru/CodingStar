@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -64,8 +65,13 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         if (clientRegistrationRepositoryProvider.getIfAvailable() != null) {
+            ClientRegistrationRepository clientRegistrationRepository = clientRegistrationRepositoryProvider
+                    .getObject();
             http.oauth2Login(oauth2 -> oauth2
                     .authorizationEndpoint(auth -> auth
+                            .authorizationRequestResolver(
+                                    new FrontendAwareOAuth2AuthorizationRequestResolver(
+                                            clientRegistrationRepository))
                             .authorizationRequestRepository(cookieAuthorizationRequestRepository))
                     .successHandler(oAuth2SuccessHandler)
                     .failureHandler((request, response, exception) -> {

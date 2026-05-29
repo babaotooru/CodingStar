@@ -40,6 +40,7 @@ E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\repo
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\repository\TestCaseRepository.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\repository\UserRepository.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\security\CustomUserDetailsService.java
+E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\security\FrontendAwareOAuth2AuthorizationRequestResolver.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\security\HttpCookieOAuth2AuthorizationRequestRepository.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\security\JwtFilter.java
 E:\Desktop\Online Coding Judge System\backend\src\main\java\com\onlinejudge\security\JwtUtil.java
