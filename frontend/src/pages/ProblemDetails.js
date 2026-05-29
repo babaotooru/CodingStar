@@ -26,12 +26,30 @@ function ProblemDetails() {
   if (loading) return <LoadingSpinner text="Loading problem..." />;
   if (!problem) return <div className="text-center text-dark-400 py-12">Problem not found</div>;
 
+  const pickSampleText = (value) => {
+    if (typeof value !== 'string') return value || '';
+    const trimmed = value.trim();
+    if (
+      (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+      (trimmed.startsWith("'") && trimmed.endsWith("'"))
+    ) {
+      try {
+        return JSON.parse(trimmed);
+      } catch {
+        return trimmed.slice(1, -1).replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+      }
+    }
+    return trimmed;
+  };
+
   const sampleTestcase = Array.isArray(problem.testcases)
-    ? problem.testcases.find((testcase) => testcase?.isSample)
+    ? problem.testcases.find((testcase) => testcase?.isSample) || problem.testcases[0]
     : null;
-  const sampleInput = problem.sampleInput || problem.sample_input || sampleTestcase?.input || '';
-  const sampleOutput = problem.sampleOutput || problem.sample_output || sampleTestcase?.output || '';
-  const sampleExplanation = problem.sampleExplanation || problem.sample_explanation || sampleTestcase?.explanation || '';
+  const sampleInput = pickSampleText(problem.sampleInput || problem.sample_input || sampleTestcase?.input || '');
+  const sampleOutput = pickSampleText(problem.sampleOutput || problem.sample_output || sampleTestcase?.output || '');
+  const sampleExplanation = pickSampleText(
+    problem.sampleExplanation || problem.sample_explanation || sampleTestcase?.explanation || ''
+  );
   const problemCode = problem.problemCode || (problem.id != null ? `P${String(problem.id).padStart(5, '0')}` : '');
 
   return (
