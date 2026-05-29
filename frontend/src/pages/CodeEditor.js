@@ -689,42 +689,50 @@ Rules:
                   </div>
                 )}
 
-                {sampleInput && (
-                  <div className="border border-blue-500/30 rounded-lg overflow-hidden">
-                    <div className="flex items-center justify-between bg-blue-900/30 px-3 py-2">
-                      <h3 className="font-semibold text-blue-300 text-sm flex items-center gap-2">
-                        <span>📥</span> Sample Input
-                      </h3>
-                      <button
-                        onClick={() => navigator.clipboard.writeText(sampleInput)}
-                        className="text-blue-400 hover:text-blue-200 text-xs flex items-center gap-1 transition-colors"
-                        title="Copy"
-                      >📋 Copy</button>
-                    </div>
-                    <pre className="bg-dark-800 p-3 text-green-300 font-mono text-sm whitespace-pre-wrap">{sampleInput}</pre>
-                  </div>
-                )}
+                {(sampleInput || sampleOutput || sampleExplanation) && (
+                  <div>
+                    <h3 className="font-semibold text-white mb-2">Sample</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="border border-blue-500/30 rounded-lg overflow-hidden">
+                        <div className="flex items-center justify-between bg-blue-900/30 px-3 py-2">
+                          <h4 className="font-semibold text-blue-300 text-sm flex items-center gap-2">
+                            <span>📥</span> Input
+                          </h4>
+                          <button
+                            onClick={() => navigator.clipboard.writeText(sampleInput || '')}
+                            className="text-blue-400 hover:text-blue-200 text-xs flex items-center gap-1 transition-colors"
+                            title="Copy"
+                          >📋 Copy</button>
+                        </div>
+                        <pre className="bg-dark-800 p-3 text-green-300 font-mono text-sm whitespace-pre-wrap">{sampleInput || '—'}</pre>
+                      </div>
 
-                {sampleOutput && (
-                  <div className="border border-emerald-500/30 rounded-lg overflow-hidden">
-                    <div className="flex items-center justify-between bg-emerald-900/30 px-3 py-2">
-                      <h3 className="font-semibold text-emerald-300 text-sm flex items-center gap-2">
-                        <span>📤</span> Sample Output
-                      </h3>
-                      <button
-                        onClick={() => navigator.clipboard.writeText(sampleOutput)}
-                        className="text-emerald-400 hover:text-emerald-200 text-xs flex items-center gap-1 transition-colors"
-                        title="Copy"
-                      >📋 Copy</button>
-                    </div>
-                    <pre className="bg-dark-800 p-3 text-yellow-300 font-mono text-sm whitespace-pre-wrap">{sampleOutput}</pre>
-                  </div>
-                )}
+                      <div className="border border-emerald-500/30 rounded-lg overflow-hidden">
+                        <div className="flex items-center justify-between bg-emerald-900/30 px-3 py-2">
+                          <h4 className="font-semibold text-emerald-300 text-sm flex items-center gap-2">
+                            <span>📤</span> Output
+                          </h4>
+                          <button
+                            onClick={() => navigator.clipboard.writeText(sampleOutput || '')}
+                            className="text-emerald-400 hover:text-emerald-200 text-xs flex items-center gap-1 transition-colors"
+                            title="Copy"
+                          >📋 Copy</button>
+                        </div>
+                        <pre className="bg-dark-800 p-3 text-yellow-300 font-mono text-sm whitespace-pre-wrap">{sampleOutput || '—'}</pre>
+                      </div>
 
-                {sampleExplanation && (
-                  <div className="bg-dark-800/60 border border-dark-700 rounded-lg p-3">
-                    <div className="text-dark-500 text-xs uppercase tracking-wide mb-1">Sample Explanation</div>
-                    <div className="text-dark-300 whitespace-pre-wrap text-sm">{sampleExplanation}</div>
+                      <div className="bg-dark-800/60 border border-dark-700 rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-dark-500 text-xs uppercase tracking-wide">Explanation</div>
+                          <button
+                            onClick={() => navigator.clipboard.writeText(sampleExplanation || '')}
+                            className="text-dark-400 hover:text-dark-200 text-xs flex items-center gap-1 transition-colors"
+                            title="Copy"
+                          >📋 Copy</button>
+                        </div>
+                        <div className="text-dark-300 whitespace-pre-wrap text-sm">{sampleExplanation || '—'}</div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

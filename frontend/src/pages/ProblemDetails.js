@@ -126,40 +126,47 @@ function ProblemDetails() {
             </div>
           )}
 
-          {sampleInput && (
-            <div className="border border-blue-500/30 rounded-lg overflow-hidden">
-              <div className="flex items-center justify-between bg-blue-900/30 px-4 py-2.5">
-                <h2 className="text-lg font-semibold text-blue-300 flex items-center gap-2">
-                  <span>📥</span> Sample Input
-                </h2>
-                <button
-                  onClick={() => navigator.clipboard.writeText(sampleInput)}
-                  className="text-blue-400 hover:text-blue-200 text-xs flex items-center gap-1 transition-colors"
-                >📋 Copy</button>
-              </div>
-              <pre className="bg-dark-800 p-4 text-green-300 font-mono text-sm overflow-x-auto whitespace-pre-wrap">{sampleInput}</pre>
-            </div>
-          )}
+          {(sampleInput || sampleOutput || sampleExplanation) && (
+            <div>
+              <h2 className="text-xl font-semibold text-white mb-3">Sample</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="border border-blue-500/30 rounded-lg overflow-hidden">
+                  <div className="flex items-center justify-between bg-blue-900/30 px-4 py-2.5">
+                    <h3 className="text-lg font-semibold text-blue-300 flex items-center gap-2">
+                      <span>📥</span> Input
+                    </h3>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(sampleInput || '')}
+                      className="text-blue-400 hover:text-blue-200 text-xs flex items-center gap-1 transition-colors"
+                    >📋 Copy</button>
+                  </div>
+                  <pre className="bg-dark-800 p-4 text-green-300 font-mono text-sm overflow-x-auto whitespace-pre-wrap">{sampleInput || '—'}</pre>
+                </div>
 
-          {sampleOutput && (
-            <div className="border border-emerald-500/30 rounded-lg overflow-hidden">
-              <div className="flex items-center justify-between bg-emerald-900/30 px-4 py-2.5">
-                <h2 className="text-lg font-semibold text-emerald-300 flex items-center gap-2">
-                  <span>📤</span> Sample Output
-                </h2>
-                <button
-                  onClick={() => navigator.clipboard.writeText(sampleOutput)}
-                  className="text-emerald-400 hover:text-emerald-200 text-xs flex items-center gap-1 transition-colors"
-                >📋 Copy</button>
-              </div>
-              <pre className="bg-dark-800 p-4 text-yellow-300 font-mono text-sm overflow-x-auto whitespace-pre-wrap">{sampleOutput}</pre>
-            </div>
-          )}
+                <div className="border border-emerald-500/30 rounded-lg overflow-hidden">
+                  <div className="flex items-center justify-between bg-emerald-900/30 px-4 py-2.5">
+                    <h3 className="text-lg font-semibold text-emerald-300 flex items-center gap-2">
+                      <span>📤</span> Output
+                    </h3>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(sampleOutput || '')}
+                      className="text-emerald-400 hover:text-emerald-200 text-xs flex items-center gap-1 transition-colors"
+                    >📋 Copy</button>
+                  </div>
+                  <pre className="bg-dark-800 p-4 text-yellow-300 font-mono text-sm overflow-x-auto whitespace-pre-wrap">{sampleOutput || '—'}</pre>
+                </div>
 
-          {sampleExplanation && (
-            <div className="bg-dark-800/70 border border-dark-700 rounded-lg p-3">
-              <div className="text-dark-500 text-xs uppercase tracking-wide mb-1">Sample Explanation</div>
-              <div className="text-dark-300 whitespace-pre-wrap">{sampleExplanation}</div>
+                <div className="bg-dark-800/70 border border-dark-700 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-dark-500 text-xs uppercase tracking-wide">Explanation</div>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(sampleExplanation || '')}
+                      className="text-dark-400 hover:text-dark-200 text-xs flex items-center gap-1 transition-colors"
+                    >📋 Copy</button>
+                  </div>
+                  <div className="text-dark-300 whitespace-pre-wrap text-sm">{sampleExplanation || '—'}</div>
+                </div>
+              </div>
             </div>
           )}
 
