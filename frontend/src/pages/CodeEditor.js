@@ -9,6 +9,7 @@ import SubmissionResultModal from '../components/SubmissionResultModal';
 import Editorial from '../components/Editorial';
 import NotesEditor from '../components/NotesEditor';
 import { toast } from 'react-toastify';
+import { resolveSampleFields } from '../utils/sampleFallback';
 
 const languageDefaults = {
   JAVA: {
@@ -365,30 +366,7 @@ Rules:
   if (loading) return <LoadingSpinner text="Loading editor..." />;
   if (!problem) return <div className="text-center text-dark-400 py-12">Problem not found</div>;
 
-  const pickSampleText = (value) => {
-    if (typeof value !== 'string') return value || '';
-    const trimmed = value.trim();
-    if (
-      (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
-      (trimmed.startsWith("'") && trimmed.endsWith("'"))
-    ) {
-      try {
-        return JSON.parse(trimmed);
-      } catch {
-        return trimmed.slice(1, -1).replace(/\\n/g, '\n').replace(/\\t/g, '\t');
-      }
-    }
-    return trimmed;
-  };
-
-  const sampleTestcase = Array.isArray(problem.testcases)
-    ? problem.testcases.find((testcase) => testcase?.isSample) || problem.testcases[0]
-    : null;
-  const sampleInput = pickSampleText(problem.sampleInput || problem.sample_input || sampleTestcase?.input || '');
-  const sampleOutput = pickSampleText(problem.sampleOutput || problem.sample_output || sampleTestcase?.output || '');
-  const sampleExplanation = pickSampleText(
-    problem.sampleExplanation || problem.sample_explanation || sampleTestcase?.explanation || ''
-  );
+  const { sampleInput, sampleOutput, sampleExplanation } = resolveSampleFields(problem);
   const testCasesPassed = Number(result?.testCasesPassed ?? result?.test_cases_passed ?? 0);
   const totalTestCases = Number(result?.totalTestCases ?? result?.total_test_cases ?? 0);
 
