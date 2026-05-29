@@ -150,6 +150,7 @@ public class ProblemService {
                 .constraints(request.getConstraints())
                 .sampleInput(request.getSampleInput())
                 .sampleOutput(request.getSampleOutput())
+                .sampleExplanation(request.getSampleExplanation())
                 .category(request.getCategory() != null ? request.getCategory() : "General")
                 .timeLimitMs(request.getTimeLimitMs())
                 .memoryLimitMb(request.getMemoryLimitMb())
@@ -188,6 +189,7 @@ public class ProblemService {
         problem.setConstraints(request.getConstraints());
         problem.setSampleInput(request.getSampleInput());
         problem.setSampleOutput(request.getSampleOutput());
+        problem.setSampleExplanation(request.getSampleExplanation());
         if (request.getCategory() != null) {
             problem.setCategory(request.getCategory());
         }
@@ -249,6 +251,7 @@ public class ProblemService {
                 .constraints(problem.getConstraints())
                 .sampleInput(problem.getSampleInput())
                 .sampleOutput(problem.getSampleOutput())
+                .sampleExplanation(problem.getSampleExplanation())
                 .category(problem.getCategory())
                 .topics(problem.getTopics())
                 .companies(problem.getCompanies())

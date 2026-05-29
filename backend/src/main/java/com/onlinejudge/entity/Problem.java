@@ -47,6 +47,9 @@ public class Problem {
     @Column(columnDefinition = "TEXT")
     private String sampleOutput;
 
+    @Column(name = "sample_explanation", columnDefinition = "TEXT")
+    private String sampleExplanation;
+
     @Column(name = "time_limit_ms")
     @Builder.Default
     private int timeLimitMs = 2000;

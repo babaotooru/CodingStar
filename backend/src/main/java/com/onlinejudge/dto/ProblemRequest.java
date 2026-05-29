@@ -23,6 +23,7 @@ public class ProblemRequest {
     private String constraints;
     private String sampleInput;
     private String sampleOutput;
+    private String sampleExplanation;
     private String category;
     private int timeLimitMs = 2000;
     private int memoryLimitMb = 256;

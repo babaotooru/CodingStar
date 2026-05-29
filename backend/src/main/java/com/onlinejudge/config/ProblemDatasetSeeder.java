@@ -115,6 +115,7 @@ public class ProblemDatasetSeeder implements ApplicationRunner {
         String constraints = text(problemNode, "constraints", null);
         String sampleInput = text(problemNode, "sample_input", null);
         String sampleOutput = text(problemNode, "sample_output", null);
+        String sampleExplanation = text(problemNode, "sample_explanation", null);
         int timeLimitMs = problemNode.path("time_limit_ms").asInt(2000);
         int memoryLimitMb = problemNode.path("memory_limit_mb").asInt(256);
         int totalSubmissions = problemNode.path("submissions").asInt(0);
@@ -150,6 +151,7 @@ public class ProblemDatasetSeeder implements ApplicationRunner {
                 .constraints(constraints)
                 .sampleInput(sampleInput)
                 .sampleOutput(sampleOutput)
+                .sampleExplanation(sampleExplanation)
                 .timeLimitMs(timeLimitMs)
                 .memoryLimitMb(memoryLimitMb)
                 .category(category)
