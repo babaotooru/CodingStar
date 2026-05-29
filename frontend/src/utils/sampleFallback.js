@@ -1,5 +1,7 @@
 import sampleFallbackLookup from '../data/problemSampleLookup.json';
 
+export const SAMPLE_FALLBACK_BUILD_TAG = '2026-05-29-1';
+
 export function pickSampleText(value) {
   if (typeof value !== 'string') return value || '';
   const trimmed = value.trim();
