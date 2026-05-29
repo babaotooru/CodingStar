@@ -103,12 +103,6 @@ function ProblemDetails() {
               <div className="text-white">{new Date(problem.updatedAt).toLocaleString()}</div>
             </div>
           )}
-          {sampleExplanation && (
-            <div className="bg-dark-800/70 border border-dark-700 rounded-lg p-3 sm:col-span-2 lg:col-span-3">
-              <div className="text-dark-500 text-xs uppercase tracking-wide mb-1">Sample Explanation</div>
-              <div className="text-dark-300 whitespace-pre-wrap">{sampleExplanation}</div>
-            </div>
-          )}
         </div>
 
         {/* Description */}
@@ -129,13 +123,6 @@ function ProblemDetails() {
             <div>
               <h2 className="text-xl font-semibold text-white mb-3">Output Format</h2>
               <div className="text-dark-300 whitespace-pre-wrap">{problem.outputFormat}</div>
-            </div>
-          )}
-
-          {problem.constraints && (
-            <div>
-              <h2 className="text-xl font-semibold text-white mb-3">Constraints</h2>
-              <div className="text-dark-300 whitespace-pre-wrap font-mono text-sm bg-dark-800 rounded-lg p-4">{problem.constraints}</div>
             </div>
           )}
 
@@ -166,6 +153,20 @@ function ProblemDetails() {
                 >📋 Copy</button>
               </div>
               <pre className="bg-dark-800 p-4 text-yellow-300 font-mono text-sm overflow-x-auto whitespace-pre-wrap">{sampleOutput}</pre>
+            </div>
+          )}
+
+          {sampleExplanation && (
+            <div className="bg-dark-800/70 border border-dark-700 rounded-lg p-3">
+              <div className="text-dark-500 text-xs uppercase tracking-wide mb-1">Sample Explanation</div>
+              <div className="text-dark-300 whitespace-pre-wrap">{sampleExplanation}</div>
+            </div>
+          )}
+
+          {problem.constraints && (
+            <div>
+              <h2 className="text-xl font-semibold text-white mb-3">Constraints</h2>
+              <div className="text-dark-300 whitespace-pre-wrap font-mono text-sm bg-dark-800 rounded-lg p-4">{problem.constraints}</div>
             </div>
           )}
 

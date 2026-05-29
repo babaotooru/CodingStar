@@ -152,9 +152,11 @@ function SubmissionResultModal({ result, stats, onClose, problemTitle, problemId
 
   const runtimeBeats = stats?.runtimeBeats || 0;
   const memoryBeats = stats?.memoryBeats || 0;
-  const runtimeMs = result.executionTimeMs || 0;
-  const memoryKb = result.memoryUsedKb || 0;
+  const runtimeMs = Number(result.executionTimeMs ?? result.execution_time_ms ?? 0);
+  const memoryKb = Number(result.memoryUsedKb ?? result.memory_used_kb ?? 0);
   const memoryMb = (memoryKb / 1024).toFixed(2);
+  const testCasesPassed = Number(result.testCasesPassed ?? result.test_cases_passed ?? 0);
+  const totalTestCases = Number(result.totalTestCases ?? result.total_test_cases ?? 0);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -226,7 +228,7 @@ function SubmissionResultModal({ result, stats, onClose, problemTitle, problemId
             {(result?.status || '').replace(/_/g, ' ')}
           </h2>
           <p className="text-dark-400 text-sm mt-1">
-            {result.testCasesPassed}/{result.totalTestCases} test cases passed
+            {testCasesPassed}/{totalTestCases} test cases passed
           </p>
           {problemTitle && (
             <p className="text-dark-500 text-xs mt-1">{problemTitle}</p>
@@ -403,11 +405,11 @@ function SubmissionResultModal({ result, stats, onClose, problemTitle, problemId
 
 function getMotivationalMessage(runtimeBeats, memoryBeats) {
   const avg = (runtimeBeats + memoryBeats) / 2;
-  if (avg >= 90) return "Outstanding! You're in the top tier! 🏆";
-  if (avg >= 70) return "Great solution! Keep optimizing! 💪";
-  if (avg >= 50) return "Good job! Can you make it faster? 🚀";
-  if (avg >= 30) return "Nice work! Try to optimize your approach 🔧";
-  return "Accepted! Consider a different algorithm for better performance 💡";
+  if (avg >= 90) return "Outstanding! You're in the top tier!";
+  if (avg >= 70) return "Great solution! Keep optimizing.";
+  if (avg >= 50) return "Good job! Can you make it faster?";
+  if (avg >= 30) return "Nice work! Try to optimize your approach.";
+  return "Accepted! Consider a different algorithm for better performance.";
 }
 
 export default SubmissionResultModal;

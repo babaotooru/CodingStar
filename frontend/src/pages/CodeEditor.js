@@ -371,6 +371,8 @@ Rules:
   const sampleInput = problem.sampleInput || problem.sample_input || sampleTestcase?.input || '';
   const sampleOutput = problem.sampleOutput || problem.sample_output || sampleTestcase?.output || '';
   const sampleExplanation = problem.sampleExplanation || problem.sample_explanation || sampleTestcase?.explanation || '';
+  const testCasesPassed = Number(result?.testCasesPassed ?? result?.test_cases_passed ?? 0);
+  const totalTestCases = Number(result?.totalTestCases ?? result?.total_test_cases ?? 0);
 
   return (
     <div className="flex flex-col h-[calc(100vh-5rem)]">
@@ -737,12 +739,12 @@ Rules:
                     <div className="flex items-center gap-3 mb-3">
                       <StatusBadge status={result.status} />
                       <span className="text-dark-300 text-sm">
-                        {result.testCasesPassed}/{result.totalTestCases} passed
+                        {testCasesPassed}/{totalTestCases} passed
                       </span>
                     </div>
                     {/* Individual test case results */}
-                    {Array.from({ length: result.totalTestCases }, (_, i) => {
-                      const passed = i < result.testCasesPassed;
+                    {Array.from({ length: totalTestCases }, (_, i) => {
+                      const passed = i < testCasesPassed;
                       return (
                         <div key={i} className={`rounded-lg border p-3 ${passed ? 'border-green-700/50 bg-green-900/10' : 'border-red-700/50 bg-red-900/10'}`}>
                           <div className="flex items-center gap-2">
