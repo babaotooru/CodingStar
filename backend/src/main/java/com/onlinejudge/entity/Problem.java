@@ -41,10 +41,10 @@ public class Problem {
     @Column(columnDefinition = "TEXT")
     private String constraints;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "sample_input", columnDefinition = "TEXT")
     private String sampleInput;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "sample_output", columnDefinition = "TEXT")
     private String sampleOutput;
 
     @Column(name = "sample_explanation", columnDefinition = "TEXT")
