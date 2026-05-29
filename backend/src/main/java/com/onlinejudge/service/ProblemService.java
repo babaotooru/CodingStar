@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -241,7 +242,7 @@ public class ProblemService {
                 ? (double) problem.getAcceptedSubmissions() / problem.getTotalSubmissions() * 100
                 : 0.0;
 
-        return ProblemResponse.builder()
+        ProblemResponse response = ProblemResponse.builder()
                 .id(problem.getId())
                 .title(problem.getTitle())
                 .description(problem.getDescription())
@@ -268,6 +269,8 @@ public class ProblemService {
                 .createdAt(problem.getCreatedAt())
                 .acceptanceRate(Math.round(acceptanceRate * 100.0) / 100.0)
                 .build();
+
+        return mergeWithFallback(response, problem.getTitle(), problem.getDifficulty());
     }
 
     private Page<ProblemResponse> pageFromList(List<ProblemResponse> items, Pageable pageable) {
@@ -480,6 +483,106 @@ public class ProblemService {
                     .build());
         }
         return testcases;
+    }
+
+    private ProblemResponse mergeWithFallback(ProblemResponse response, String title, Problem.Difficulty difficulty) {
+        ProblemResponse fallback = findFallbackProblem(title, difficulty);
+        if (fallback == null) {
+            return response;
+        }
+
+        if (isBlank(response.getDescription())) {
+            response.setDescription(fallback.getDescription());
+        }
+        if (isBlank(response.getInputFormat())) {
+            response.setInputFormat(fallback.getInputFormat());
+        }
+        if (isBlank(response.getOutputFormat())) {
+            response.setOutputFormat(fallback.getOutputFormat());
+        }
+        if (isBlank(response.getConstraints())) {
+            response.setConstraints(fallback.getConstraints());
+        }
+        if (isBlank(response.getSampleInput())) {
+            response.setSampleInput(fallback.getSampleInput());
+        }
+        if (isBlank(response.getSampleOutput())) {
+            response.setSampleOutput(fallback.getSampleOutput());
+        }
+        if (isBlank(response.getSampleExplanation())) {
+            response.setSampleExplanation(fallback.getSampleExplanation());
+        }
+        if (response.getTestcases() == null || response.getTestcases().isEmpty()) {
+            response.setTestcases(fallback.getTestcases());
+        }
+
+        if (isBlank(response.getPlatform())) {
+            response.setPlatform(fallback.getPlatform());
+        }
+        if (isBlank(response.getKind())) {
+            response.setKind(fallback.getKind());
+        }
+        if (isBlank(response.getFamily())) {
+            response.setFamily(fallback.getFamily());
+        }
+        if (isBlank(response.getLevel())) {
+            response.setLevel(fallback.getLevel());
+        }
+        if (response.getUpdatedAt() == null) {
+            response.setUpdatedAt(fallback.getUpdatedAt());
+        }
+
+        return response;
+    }
+
+    private ProblemResponse findFallbackProblem(String title, Problem.Difficulty difficulty) {
+        if (isBlank(title)) {
+            return null;
+        }
+
+        String normalizedTitle = normalizeProblemTitle(title);
+        List<ProblemResponse> problems = loadFallbackProblems();
+
+        for (ProblemResponse candidate : problems) {
+            if (title.equalsIgnoreCase(candidate.getTitle())) {
+                return candidate;
+            }
+        }
+
+        for (ProblemResponse candidate : problems) {
+            if (normalizedTitle.equals(normalizeProblemTitle(candidate.getTitle()))) {
+                if (difficulty == null || candidate.getDifficulty() == difficulty) {
+                    return candidate;
+                }
+            }
+        }
+
+        for (ProblemResponse candidate : problems) {
+            if (normalizedTitle.equals(normalizeProblemTitle(candidate.getTitle()))) {
+                return candidate;
+            }
+        }
+
+        return problems.stream()
+                .filter(candidate -> normalizeProblemTitle(candidate.getTitle()).contains(normalizedTitle)
+                        || normalizedTitle.contains(normalizeProblemTitle(candidate.getTitle())))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String normalizeProblemTitle(String title) {
+        if (title == null) {
+            return "";
+        }
+        String normalized = title.toLowerCase(Locale.ROOT).trim();
+        normalized = normalized.replaceAll("\\s*-\\s*(easy|medium|hard)\\s*#\\d+", "");
+        normalized = normalized.replaceAll("#\\d+", "");
+        normalized = normalized.replaceAll("[^a-z0-9]+", " ");
+        return normalized.trim();
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 
     private String text(JsonNode node, String field, String defaultValue) {
